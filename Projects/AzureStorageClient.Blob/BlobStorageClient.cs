@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
     using Microsoft.Extensions.Options;
 
-    internal class BlobStorageClient : IStorageClient
+    internal class BlobStorageClient : IBlobStorageClient
     {
         // ToDo: add performance tests
         private readonly BlobStorageContainer _blobStorageContainer;
