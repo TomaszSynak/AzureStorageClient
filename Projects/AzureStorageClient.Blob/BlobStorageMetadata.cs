@@ -4,15 +4,15 @@
     using System.Collections.Generic;
     using System.ComponentModel;
 
-    internal class AzureBlobMetadata
+    internal class BlobStorageMetadata
     {
         private const string IsDeletedKey = "IsDeleted";
 
         private readonly IDictionary<string, string> _metadata;
 
-        public AzureBlobMetadata(IDictionary<string, string> metadata) => _metadata = metadata;
+        public BlobStorageMetadata(IDictionary<string, string> metadata) => _metadata = metadata;
 
-        public AzureBlobMetadata() => _metadata = new Dictionary<string, string>();
+        public BlobStorageMetadata() => _metadata = new Dictionary<string, string>();
 
         public IDictionary<string, string> Metadata => _metadata ?? new Dictionary<string, string>();
 

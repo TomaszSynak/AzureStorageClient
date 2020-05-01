@@ -7,15 +7,15 @@
     using Xunit;
 
     [Collection(nameof(IntegrationTests))]
-    public class AzureBlobContainerTests
+    public class BlobStorageContainerTests
     {
         [Fact]
-        public async Task GetAzureBlob_ContainerDoesNotExists_ContainerCreated()
+        public async Task GetBlobStorage_ContainerDoesNotExists_ContainerCreated()
         {
             // ToDo: use create resource attribute
             // Arrange
             var options = OptionsFactory.Create(Guid.NewGuid().ToString("D"));
-            var azureBlobContainer = new AzureBlobContainer(options);
+            var blobStorageContainer = new BlobStorageContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
             var containerExists = (await blobContainerClient.ExistsAsync()).Value;
@@ -25,7 +25,7 @@
             }
 
             // Act
-            await azureBlobContainer.GetAzureBlob(Guid.NewGuid().ToString("D"));
+            await blobStorageContainer.GetBlobStorage(Guid.NewGuid().ToString("D"));
 
             // Assert
             containerExists = (await blobContainerClient.ExistsAsync()).Value;
@@ -37,15 +37,15 @@
 
         [Fact]
         [CleanBlobStorage]
-        public async Task GetAzureBlob_ContainerExists_ContainerCreated()
+        public async Task GetBlobStorage_ContainerExists_ContainerCreated()
         {
             // Arrange
             var options = OptionsFactory.Create();
-            var azureBlobContainer = new AzureBlobContainer(options);
+            var blobStorageContainer = new BlobStorageContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
             // Act
-            await azureBlobContainer.GetAzureBlob(Guid.NewGuid().ToString("D"));
+            await blobStorageContainer.GetBlobStorage(Guid.NewGuid().ToString("D"));
 
             // Assert
             var containerExists = (await blobContainerClient.ExistsAsync()).Value;
@@ -53,20 +53,20 @@
         }
 
         [Fact]
-        public async Task GetAzureBlobList_ContainerExists_GetContainerContent()
+        public async Task GetBlobStorageList_ContainerExists_GetContainerContent()
         {
             // Arrange
             var options = OptionsFactory.Create(containerName: "some-mock-container");
-            var azureBlobContainer = new AzureBlobContainer(options);
-            var azureBlob = await azureBlobContainer.GetAzureBlob(Guid.NewGuid().ToString("D"));
-            await azureBlob.Upload("Some mock blob content");
+            var blobStorageContainer = new BlobStorageContainer(options);
+            var blobStorage = await blobStorageContainer.GetBlobStorage(Guid.NewGuid().ToString("D"));
+            await blobStorage.Upload("Some mock blob content");
 
             // Act
-            var azureBlobList = await azureBlobContainer.GetAzureBlobList();
+            var blobStorageList = await blobStorageContainer.GetBlobStorageList();
 
             // Assert
-            Assert.NotEmpty(azureBlobList);
-            Assert.Single(azureBlobList);
+            Assert.NotEmpty(blobStorageList);
+            Assert.Single(blobStorageList);
 
             // Clean up
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
@@ -78,27 +78,27 @@
         }
 
         [Fact]
-        public async Task GetAzureBlobList_ContainerContainsDeletedBlob_GetEmptyContent()
+        public async Task GetBlobStorageList_ContainerContainsDeletedBlob_GetEmptyContent()
         {
             // Arrange
             var options = OptionsFactory.Create(containerName: "some-mock-container");
-            var azureBlobContainer = new AzureBlobContainer(options);
+            var blobStorageContainer = new BlobStorageContainer(options);
 
             var blobName = Guid.NewGuid().ToString("D");
 
-            var azureBlob = await azureBlobContainer.GetAzureBlob(blobName);
-            await azureBlob.Upload("Some mock blob content");
+            var blobStorage = await blobStorageContainer.GetBlobStorage(blobName);
+            await blobStorage.Upload("Some mock blob content");
 
             var blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);
-            var azureBlobMetadata = new AzureBlobMetadata();
-            azureBlobMetadata.SetIsDeleted(true);
-            await blobClient.SetMetadataAsync(azureBlobMetadata.Metadata);
+            var blobStorageMetadata = new BlobStorageMetadata();
+            blobStorageMetadata.SetIsDeleted(true);
+            await blobClient.SetMetadataAsync(blobStorageMetadata.Metadata);
 
             // Act
-            var azureBlobList = await azureBlobContainer.GetAzureBlobList();
+            var blobStorageList = await blobStorageContainer.GetBlobStorageList();
 
             // Assert
-            Assert.Empty(azureBlobList);
+            Assert.Empty(blobStorageList);
 
             // Clean up
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);

@@ -9,38 +9,38 @@
     using Azure.Storage.Blobs.Models;
     using Microsoft.Extensions.Options;
 
-    internal class AzureBlob
+    internal class BlobStorage
     {
         private readonly BlobClient _blobClient;
 
-        private AzureBlobMetadata _azureBlobMetadata;
+        private BlobStorageMetadata _blobStorageMetadata;
 
         private BlobProperties _blobProperties;
 
-        public AzureBlob(IOptions<StorageClientSettings> options, string blobName)
+        public BlobStorage(IOptions<BlobStorageClientSettings> options, string blobName)
         {
             _blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);
-            _azureBlobMetadata = new AzureBlobMetadata();
+            _blobStorageMetadata = new BlobStorageMetadata();
         }
 
-        public AzureBlob(BlobClient blobClient)
+        public BlobStorage(BlobClient blobClient)
         {
             _blobClient = blobClient;
-            _azureBlobMetadata = new AzureBlobMetadata();
+            _blobStorageMetadata = new BlobStorageMetadata();
         }
 
         public async Task Upload(string blobStringContent, CancellationToken cancellationToken = default)
         {
             var blobByteContent = blobStringContent.Encode();
 
-            _azureBlobMetadata.SetIsDeleted(false);
+            _blobStorageMetadata.SetIsDeleted(false);
 
             using (var memoryStream = new MemoryStream(blobByteContent.Length))
             {
                 await memoryStream.WriteAsync(blobByteContent, 0, blobByteContent.Length, cancellationToken);
                 memoryStream.Position = 0;
 
-                await _blobClient.UploadAsync(memoryStream, BlobHeadersFactory.Create(blobByteContent), _azureBlobMetadata.Metadata, cancellationToken: cancellationToken);
+                await _blobClient.UploadAsync(memoryStream, BlobHeadersFactory.Create(blobByteContent), _blobStorageMetadata.Metadata, cancellationToken: cancellationToken);
                 await RefreshPropertiesAsync(cancellationToken);
             }
         }
@@ -52,9 +52,9 @@
             {
                 await RefreshPropertiesAsync(cancellationToken);
 
-                _azureBlobMetadata.SetIsDeleted(isDeleted);
+                _blobStorageMetadata.SetIsDeleted(isDeleted);
 
-                await _blobClient.SetMetadataAsync(_azureBlobMetadata.Metadata, cancellationToken: cancellationToken);
+                await _blobClient.SetMetadataAsync(_blobStorageMetadata.Metadata, cancellationToken: cancellationToken);
 
                 return;
             }
@@ -69,7 +69,7 @@
             {
                 await RefreshPropertiesAsync(cancellationToken);
 
-                if (_azureBlobMetadata.IsNotDeleted())
+                if (_blobStorageMetadata.IsNotDeleted())
                 {
                     var blobByteContent = new byte[_blobProperties.ContentLength];
 
@@ -117,7 +117,7 @@
         {
             _blobProperties = (await _blobClient.GetPropertiesAsync(cancellationToken: cancellationToken)).Value;
 
-            _azureBlobMetadata = new AzureBlobMetadata(_blobProperties.Metadata);
+            _blobStorageMetadata = new BlobStorageMetadata(_blobProperties.Metadata);
         }
     }
 }

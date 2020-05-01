@@ -8,11 +8,11 @@
 
     [CleanBlobStorage]
     [Collection(nameof(IntegrationTests))]
-    public class StorageClientTests
+    public class BlobStorageClientTests
     {
-        private readonly StorageClient _storageClient;
+        private readonly BlobStorageClient _blobStorageClient;
 
-        public StorageClientTests() => _storageClient = new StorageClient(OptionsFactory.Create());
+        public BlobStorageClientTests() => _blobStorageClient = new BlobStorageClient(OptionsFactory.Create());
 
         [Fact]
         public async Task UpsertAsync_ObjectUpsertCorrectly()
@@ -21,10 +21,10 @@
             var (testModel, _, _) = TestModelFactory.Create();
 
             // Act
-            await _storageClient.UpsertAsync(testModel);
+            await _blobStorageClient.UpsertAsync(testModel);
 
             // Assert
-            var blob = await _storageClient.GetAsync<TestModel>(testModel.BlobId);
+            var blob = await _blobStorageClient.GetAsync<TestModel>(testModel.BlobId);
             Assert.NotNull(blob);
         }
 
@@ -33,10 +33,10 @@
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
-            await _storageClient.UpsertAsync(testModel);
+            await _blobStorageClient.UpsertAsync(testModel);
 
             // Act
-            var blobContent = await _storageClient.GetAsync<TestModel>(testModel.BlobId);
+            var blobContent = await _blobStorageClient.GetAsync<TestModel>(testModel.BlobId);
 
             // Assert
             Assert.NotNull(blobContent);
@@ -49,10 +49,10 @@
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
-            await _storageClient.UpsertAsync(testModel);
+            await _blobStorageClient.UpsertAsync(testModel);
 
             // Act
-            var blobContentList = await _storageClient.GetListAsync<TestModel>();
+            var blobContentList = await _blobStorageClient.GetListAsync<TestModel>();
             var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id));
 
             // Assert
@@ -67,12 +67,12 @@
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
-            await _storageClient.UpsertAsync(testModel);
+            await _blobStorageClient.UpsertAsync(testModel);
             var (notListedModel, _, _) = TestModelFactory.CreateWithoutAdditionalId();
-            await _storageClient.UpsertAsync(notListedModel);
+            await _blobStorageClient.UpsertAsync(notListedModel);
 
             // Act
-            var blobContentList = await _storageClient.GetListAsync<TestModel>(prefix: testModel.AdditionalId);
+            var blobContentList = await _blobStorageClient.GetListAsync<TestModel>(prefix: testModel.AdditionalId);
             var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id));
 
             // Assert
@@ -88,13 +88,13 @@
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
-            await _storageClient.UpsertAsync(testModel);
+            await _blobStorageClient.UpsertAsync(testModel);
 
             // Act
-            await _storageClient.DeleteAsync<TestModel>(testModel.BlobId);
+            await _blobStorageClient.DeleteAsync<TestModel>(testModel.BlobId);
 
             // Assert
-            async Task CheckIfExists() => await _storageClient.GetAsync<TestModel>(testModel.BlobId);
+            async Task CheckIfExists() => await _blobStorageClient.GetAsync<TestModel>(testModel.BlobId);
             var exception = await Record.ExceptionAsync(CheckIfExists);
             Assert.IsType<Exception>(exception);
             Assert.StartsWith($"Failed to GET blob {testModel.BlobId}.", exception.Message);

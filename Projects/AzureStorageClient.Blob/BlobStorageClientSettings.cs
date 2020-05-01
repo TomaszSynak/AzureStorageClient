@@ -1,6 +1,6 @@
 ﻿namespace AzureStorageClient
 {
-    public class StorageClientSettings
+    public class BlobStorageClientSettings
     {
         public string ConnectionString { get; set; }
 

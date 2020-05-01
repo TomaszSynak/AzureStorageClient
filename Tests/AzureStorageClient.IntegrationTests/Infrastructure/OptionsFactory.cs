@@ -6,9 +6,9 @@
 
     internal class OptionsFactory
     {
-        public static IOptions<StorageClientSettings> Create(string containerName = null)
+        public static IOptions<BlobStorageClientSettings> Create(string containerName = null)
         {
-            var optionMock = new Mock<IOptions<StorageClientSettings>>();
+            var optionMock = new Mock<IOptions<BlobStorageClientSettings>>();
 
             var settings = ConfigurationProvider.GetStorageClientSettings();
             settings.ContainerName = containerName ?? settings.ContainerName;

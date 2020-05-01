@@ -7,9 +7,9 @@
 
     internal class BlobStorageManager
     {
-        private readonly StorageClientSettings _storageClientSettings;
+        private readonly BlobStorageClientSettings _blobStorageClientSettings;
 
-        public BlobStorageManager() => _storageClientSettings = ConfigurationProvider.GetStorageClientSettings();
+        public BlobStorageManager() => _blobStorageClientSettings = ConfigurationProvider.GetStorageClientSettings();
 
         public async Task SetUp() => await SetUpBlobStorage();
 
@@ -18,7 +18,7 @@
         private async Task SetUpBlobStorage()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            var blobContainerClient = new BlobContainerClient(_storageClientSettings.ConnectionString, _storageClientSettings.ContainerName);
+            var blobContainerClient = new BlobContainerClient(_blobStorageClientSettings.ConnectionString, _blobStorageClientSettings.ContainerName);
 
             var doesNotExist = await blobContainerClient.DoesNotExistAsync();
             if (doesNotExist)
@@ -29,7 +29,7 @@
 
         private async Task CleanUpBlobStorage()
         {
-            var blobContainerClient = new BlobContainerClient(_storageClientSettings.ConnectionString, _storageClientSettings.ContainerName);
+            var blobContainerClient = new BlobContainerClient(_blobStorageClientSettings.ConnectionString, _blobStorageClientSettings.ContainerName);
             var containerExists = (await blobContainerClient.ExistsAsync()).Value;
             if (containerExists)
             {
