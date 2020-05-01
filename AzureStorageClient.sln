@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageClient", "Projects\AzureStorageClient\AzureStorageClient.csproj", "{3B38928B-9B41-4808-B727-65D818583ED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageClient.Blob", "Projects\AzureStorageClient.Blob\AzureStorageClient.Blob.csproj", "{3B38928B-9B41-4808-B727-65D818583ED3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{04AA9A55-9AE9-4388-82DC-93F2C6CF8E12}"
 EndProject

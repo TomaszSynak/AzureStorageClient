@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Projects\AzureStorageClient\AzureStorageClient.csproj" />
+    <ProjectReference Include="..\..\Projects\AzureStorageClient.Blob\AzureStorageClient.Blob.csproj" />
   </ItemGroup>
 
   <ItemGroup>
