@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Authors>Kenneth Dalgleish, Tomasz Synak</Authors>
+    <Authors>Tomasz Synak</Authors>
     <Description>Client to Azure Blob Storage</Description>
 
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <PackageId>AzureStorageClient</PackageId>
+    <PackageId>AzureStorageClient.Blob</PackageId>
     <Version>0.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageTags></PackageTags>

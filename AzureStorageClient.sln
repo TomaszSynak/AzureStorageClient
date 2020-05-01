@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".slnResources", ".slnResour
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageClient.Abstractions", "Projects\AzureStorageClient.Abstractions\AzureStorageClient.Abstractions.csproj", "{8C90B4E7-538C-4420-8FF8-726FC6D48486}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -32,6 +34,10 @@ Global
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859}.Debug|x64.Build.0 = Debug|x64
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859}.Release|x64.ActiveCfg = Release|x64
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859}.Release|x64.Build.0 = Release|x64
+		{8C90B4E7-538C-4420-8FF8-726FC6D48486}.Debug|x64.ActiveCfg = Debug|x64
+		{8C90B4E7-538C-4420-8FF8-726FC6D48486}.Debug|x64.Build.0 = Debug|x64
+		{8C90B4E7-538C-4420-8FF8-726FC6D48486}.Release|x64.ActiveCfg = Release|x64
+		{8C90B4E7-538C-4420-8FF8-726FC6D48486}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3B38928B-9B41-4808-B727-65D818583ED3} = {04AA9A55-9AE9-4388-82DC-93F2C6CF8E12}
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859} = {801744BC-B403-4E9E-93AA-E0B32D8B0447}
+		{8C90B4E7-538C-4420-8FF8-726FC6D48486} = {04AA9A55-9AE9-4388-82DC-93F2C6CF8E12}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9CDA2F1B-7B6A-4F50-BB2B-9F5D8DBFD24C}
