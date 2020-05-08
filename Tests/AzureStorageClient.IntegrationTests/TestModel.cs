@@ -10,7 +10,7 @@
 
         public string Value { get; set; }
 
-        public string BlobId => string.IsNullOrWhiteSpace(AdditionalId) ? $"{Id}" : $"{AdditionalId}/{Id}";
+        public string StorableId => string.IsNullOrWhiteSpace(AdditionalId) ? $"{Id}" : $"{AdditionalId}/{Id}";
 
         public string Serialize()
         {

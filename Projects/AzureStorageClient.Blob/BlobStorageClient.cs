@@ -13,7 +13,10 @@
         private readonly BlobStorageContainer _blobStorageContainer;
 
         public BlobStorageClient(IOptions<BlobStorageClientSettings> options)
-            => _blobStorageContainer = BlobStorageContainerFactory.Create(options);
+        {
+            // ToDo: verify that settings are neither null nor empty
+            _blobStorageContainer = BlobStorageContainerFactory.Create(options);
+        }
 
         public async Task<bool> IsAccessible(CancellationToken cancellationToken = default)
             => await _blobStorageContainer.IsAccessible(cancellationToken);
@@ -23,7 +26,7 @@
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(objectToUpsert.BlobId, cancellationToken);
+                var blobStorage = await GetBlobStorage<TStorable>(objectToUpsert.StorableId, cancellationToken);
 
                 var blobStringContent = objectToUpsert.Serialize();
 
@@ -31,7 +34,7 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to UPSERT blob {objectToUpsert.BlobId}. ", exception);
+                throw new Exception($"Failed to UPSERT blob {objectToUpsert.StorableId}. ", exception);
             }
         }
 

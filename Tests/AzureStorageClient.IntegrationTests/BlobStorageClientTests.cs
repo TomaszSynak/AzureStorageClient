@@ -24,7 +24,7 @@
             await _blobStorageClient.UpsertAsync(testModel);
 
             // Assert
-            var blob = await _blobStorageClient.GetAsync<TestModel>(testModel.BlobId);
+            var blob = await _blobStorageClient.GetAsync<TestModel>(testModel.StorableId);
             Assert.NotNull(blob);
         }
 
@@ -36,7 +36,7 @@
             await _blobStorageClient.UpsertAsync(testModel);
 
             // Act
-            var blobContent = await _blobStorageClient.GetAsync<TestModel>(testModel.BlobId);
+            var blobContent = await _blobStorageClient.GetAsync<TestModel>(testModel.StorableId);
 
             // Assert
             Assert.NotNull(blobContent);
@@ -91,13 +91,13 @@
             await _blobStorageClient.UpsertAsync(testModel);
 
             // Act
-            await _blobStorageClient.DeleteAsync<TestModel>(testModel.BlobId);
+            await _blobStorageClient.DeleteAsync<TestModel>(testModel.StorableId);
 
             // Assert
-            async Task CheckIfExists() => await _blobStorageClient.GetAsync<TestModel>(testModel.BlobId);
+            async Task CheckIfExists() => await _blobStorageClient.GetAsync<TestModel>(testModel.StorableId);
             var exception = await Record.ExceptionAsync(CheckIfExists);
             Assert.IsType<Exception>(exception);
-            Assert.StartsWith($"Failed to GET blob {testModel.BlobId}.", exception.Message);
+            Assert.StartsWith($"Failed to GET blob {testModel.StorableId}.", exception.Message);
         }
     }
 }
