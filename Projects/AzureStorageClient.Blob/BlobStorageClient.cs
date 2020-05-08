@@ -122,10 +122,10 @@
             }
         }
 
-        private static string GetOrAddBlobIdPrefix<TSortable>(string blobId = null)
+        private static string GetOrAddBlobIdPrefix<TStorable>(string blobId = null)
             => string.IsNullOrWhiteSpace(blobId)
-                ? $"{typeof(TSortable).Name}"
-                : $"{typeof(TSortable).Name}/{blobId}";
+                ? $"{typeof(TStorable).Name}"
+                : $"{typeof(TStorable).Name}/{blobId}";
 
         private async Task<BlobStorage> GetBlobStorage<TStorable>(string blobId, CancellationToken cancellationToken = default)
             where TStorable : class, IStorable, new()
