@@ -15,10 +15,10 @@
             return storageClientSettings;
         }
 
-        public static TableStorageClientSettings GetTableStorageClientSettings()
+        public static AzureTableClientSettings GetTableStorageClientSettings()
         {
-            var storageClientSettings = new TableStorageClientSettings();
-            GetConfigurationRoot().GetSection(nameof(TableStorageClientSettings)).Bind(storageClientSettings);
+            var storageClientSettings = new AzureTableClientSettings();
+            GetConfigurationRoot().GetSection(nameof(AzureTableClientSettings)).Bind(storageClientSettings);
             return storageClientSettings;
         }
 

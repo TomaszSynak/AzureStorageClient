@@ -1,9 +1,7 @@
 ﻿namespace AzureStorageClient
 {
-    public class TableStorageClientSettings
+    public class AzureTableClientSettings
     {
         public string ConnectionString { get; set; }
-
-        public string ContainerName { get; set; }
     }
 }

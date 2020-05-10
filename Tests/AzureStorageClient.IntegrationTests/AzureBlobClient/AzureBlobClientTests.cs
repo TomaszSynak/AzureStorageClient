@@ -5,14 +5,15 @@
     using System.Threading.Tasks;
     using Infrastructure;
     using Xunit;
+    using AzureBlobClient = AzureStorageClient.AzureBlobClient;
 
     [CleanAzureBlob]
     [Collection(nameof(IntegrationTests))]
     public class AzureBlobClientTests
     {
-        private readonly AzureStorageClient.AzureBlobClient _azureBlobStorageClient;
+        private readonly AzureBlobClient _azureBlobClient;
 
-        public AzureBlobClientTests() => _azureBlobStorageClient = new AzureStorageClient.AzureBlobClient(OptionsFactory.CreateBlobSettings());
+        public AzureBlobClientTests() => _azureBlobClient = new AzureBlobClient(OptionsFactory.CreateBlobSettings());
 
         [Fact]
         public async Task UpsertAsync_ObjectUpsertCorrectly()
@@ -21,10 +22,10 @@
             var (testModel, _, _) = TestModelFactory.Create();
 
             // Act
-            await _azureBlobStorageClient.UpsertAsync(testModel);
+            await _azureBlobClient.UpsertAsync(testModel);
 
             // Assert
-            var blob = await _azureBlobStorageClient.GetAsync<TestModel>(testModel.StorableId);
+            var blob = await _azureBlobClient.GetAsync<TestModel>(testModel.StorableId);
             Assert.NotNull(blob);
         }
 
@@ -33,10 +34,10 @@
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
-            await _azureBlobStorageClient.UpsertAsync(testModel);
+            await _azureBlobClient.UpsertAsync(testModel);
 
             // Act
-            var blobContent = await _azureBlobStorageClient.GetAsync<TestModel>(testModel.StorableId);
+            var blobContent = await _azureBlobClient.GetAsync<TestModel>(testModel.StorableId);
 
             // Assert
             Assert.NotNull(blobContent);
@@ -49,10 +50,10 @@
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
-            await _azureBlobStorageClient.UpsertAsync(testModel);
+            await _azureBlobClient.UpsertAsync(testModel);
 
             // Act
-            var blobContentList = await _azureBlobStorageClient.GetListAsync<TestModel>();
+            var blobContentList = await _azureBlobClient.GetListAsync<TestModel>();
             var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id));
 
             // Assert
@@ -67,12 +68,12 @@
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
-            await _azureBlobStorageClient.UpsertAsync(testModel);
+            await _azureBlobClient.UpsertAsync(testModel);
             var (notListedModel, _, _) = TestModelFactory.CreateWithoutAdditionalId();
-            await _azureBlobStorageClient.UpsertAsync(notListedModel);
+            await _azureBlobClient.UpsertAsync(notListedModel);
 
             // Act
-            var blobContentList = await _azureBlobStorageClient.GetListAsync<TestModel>(prefix: testModel.AdditionalId);
+            var blobContentList = await _azureBlobClient.GetListAsync<TestModel>(prefix: testModel.AdditionalId);
             var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id));
 
             // Assert
@@ -88,13 +89,13 @@
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
-            await _azureBlobStorageClient.UpsertAsync(testModel);
+            await _azureBlobClient.UpsertAsync(testModel);
 
             // Act
-            await _azureBlobStorageClient.DeleteAsync<TestModel>(testModel.StorableId);
+            await _azureBlobClient.DeleteAsync<TestModel>(testModel.StorableId);
 
             // Assert
-            async Task CheckIfExists() => await _azureBlobStorageClient.GetAsync<TestModel>(testModel.StorableId);
+            async Task CheckIfExists() => await _azureBlobClient.GetAsync<TestModel>(testModel.StorableId);
             var exception = await Record.ExceptionAsync(CheckIfExists);
             Assert.IsType<Exception>(exception);
             Assert.StartsWith($"Failed to GET blob {testModel.StorableId}.", exception.Message);

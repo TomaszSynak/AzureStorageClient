@@ -20,12 +20,11 @@
             return optionMock.Object;
         }
 
-        public static IOptions<TableStorageClientSettings> CreateTableSettings(string containerName = null)
+        public static IOptions<AzureTableClientSettings> CreateTableSettings()
         {
-            var optionMock = new Mock<IOptions<TableStorageClientSettings>>();
+            var optionMock = new Mock<IOptions<AzureTableClientSettings>>();
 
             var settings = ConfigurationProvider.GetTableStorageClientSettings();
-            settings.ContainerName = containerName ?? settings.ContainerName;
 
             optionMock
                 .Setup(o => o.Value)

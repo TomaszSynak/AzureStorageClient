@@ -7,11 +7,11 @@ namespace AzureStorageClient
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
-    public static class TableStorageClientConfiguration
+    public static class AzureTableClientConfiguration
     {
-        private const string SettingsSection = nameof(TableStorageClientSettings);
+        private const string SettingsSection = nameof(AzureTableClientSettings);
 
-        public static void AddTableStorageClient(this IServiceCollection serviceCollection, IConfiguration configuration)
+        public static void AddAzureTableClient(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
             // Enable TLS 1.2 before connecting to Azure Storage
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -20,11 +20,10 @@ namespace AzureStorageClient
                      ?? throw new ArgumentNullException($"{SettingsSection} is missing from configuration.");
 
             serviceCollection
-                .Configure<TableStorageClientSettings>(configurationSection);
+                .Configure<AzureTableClientSettings>(configurationSection);
 
             serviceCollection
-                .AddTransient<IStorageClient, TableStorageClient>()
-                .AddTransient<ITableStorageClient, TableStorageClient>();
+                .AddTransient<IAzureTableClient, AzureTableClient>();
         }
     }
 }

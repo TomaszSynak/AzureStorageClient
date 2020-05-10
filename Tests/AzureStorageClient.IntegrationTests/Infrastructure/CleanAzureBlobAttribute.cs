@@ -2,6 +2,7 @@
 {
     using System;
     using System.Reflection;
+    using System.Threading;
     using Xunit.Sdk;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
@@ -11,8 +12,8 @@
 
         public CleanAzureBlobAttribute() => _blobStorageManager = new AzureBlobManager();
 
-        public override void Before(MethodInfo methodUnderTest) => _blobStorageManager.SetUp().GetAwaiter().GetResult();
+        public override void Before(MethodInfo methodUnderTest) => _blobStorageManager.SetUp(CancellationToken.None).GetAwaiter().GetResult();
 
-        public override void After(MethodInfo methodUnderTest) => _blobStorageManager.CleanUp().GetAwaiter().GetResult();
+        public override void After(MethodInfo methodUnderTest) => _blobStorageManager.CleanUp(CancellationToken.None).GetAwaiter().GetResult();
     }
 }
