@@ -9,7 +9,7 @@
     {
         private readonly BlobStorageClientSettings _blobStorageClientSettings;
 
-        public BlobStorageManager() => _blobStorageClientSettings = ConfigurationProvider.GetStorageClientSettings();
+        public BlobStorageManager() => _blobStorageClientSettings = ConfigurationProvider.GetBlobStorageClientSettings();
 
         public async Task SetUp() => await SetUpBlobStorage();
 

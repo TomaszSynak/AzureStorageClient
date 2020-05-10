@@ -30,8 +30,4 @@
 		<PackageReference Include="System.Collections.Immutable" Version="1.7.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\AzureStorageClient.Abstractions\AzureStorageClient.Abstractions.csproj" />
-	</ItemGroup>
 </Project>

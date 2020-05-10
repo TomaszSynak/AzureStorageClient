@@ -26,7 +26,7 @@
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(objectToUpsert.StorableId, cancellationToken);
+                var blobStorage = await GetBlobStorage<TStorable>(objectToUpsert.BlobId, cancellationToken);
 
                 var blobStringContent = objectToUpsert.Serialize();
 
@@ -34,16 +34,16 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to UPSERT blob {objectToUpsert.StorableId}. ", exception);
+                throw new Exception($"Failed to UPSERT blob {objectToUpsert.BlobId}. ", exception);
             }
         }
 
-        public async Task<TStorable> GetAsync<TStorable>(string blobId, CancellationToken cancellationToken = default)
+        public async Task<TStorable> GetAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
             where TStorable : class, IStorable, new()
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(blobId, cancellationToken);
+                var blobStorage = await GetBlobStorage<TStorable>(storableId, cancellationToken);
 
                 var blobStringContent = await blobStorage.Download(cancellationToken);
 
@@ -51,7 +51,7 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to GET blob {blobId}. ", exception);
+                throw new Exception($"Failed to GET blob {storableId}. ", exception);
             }
         }
 
@@ -78,59 +78,59 @@
             }
         }
 
-        public async Task SoftDeleteAsync<TStorable>(string blobId, CancellationToken cancellationToken = default)
+        public async Task SoftDeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
             where TStorable : class, IStorable, new()
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(blobId, cancellationToken);
+                var blobStorage = await GetBlobStorage<TStorable>(storableId, cancellationToken);
                 await blobStorage.SetIsDeleted(true, cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to CheckAsDeleted blob {blobId}. ", exception);
+                throw new Exception($"Failed to CheckAsDeleted blob {storableId}. ", exception);
             }
         }
 
-        public async Task RevertSoftDeleteAsync<TStorable>(string blobId, CancellationToken cancellationToken = default)
+        public async Task RevertSoftDeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
             where TStorable : class, IStorable, new()
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(blobId, cancellationToken);
+                var blobStorage = await GetBlobStorage<TStorable>(storableId, cancellationToken);
                 await blobStorage.SetIsDeleted(false, cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to UncheckAsDeleted blob {blobId}. ", exception);
+                throw new Exception($"Failed to UncheckAsDeleted blob {storableId}. ", exception);
             }
         }
 
-        public async Task DeleteAsync<TStorable>(string blobId, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
             where TStorable : class, IStorable, new()
         {
-            // ToDo: make sure that blobId is the one from TStorable, as user intended
+            // ToDo: make sure that storableId is the one from TStorable, as user intended
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(blobId, cancellationToken);
+                var blobStorage = await GetBlobStorage<TStorable>(storableId, cancellationToken);
 
                 await blobStorage.Delete(cancellationToken: cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to DELETE blob {blobId}. ", exception);
+                throw new Exception($"Failed to DELETE blob {storableId}. ", exception);
             }
         }
 
-        private static string GetOrAddBlobIdPrefix<TStorable>(string blobId = null)
-            => string.IsNullOrWhiteSpace(blobId)
+        private static string GetOrAddBlobIdPrefix<TStorable>(string storableId = null)
+            => string.IsNullOrWhiteSpace(storableId)
                 ? $"{typeof(TStorable).Name}"
-                : $"{typeof(TStorable).Name}/{blobId}";
+                : $"{typeof(TStorable).Name}/{storableId}";
 
-        private async Task<BlobStorage> GetBlobStorage<TStorable>(string blobId, CancellationToken cancellationToken = default)
+        private async Task<BlobStorage> GetBlobStorage<TStorable>(string storableId, CancellationToken cancellationToken = default)
             where TStorable : class, IStorable, new()
         {
-            return await _blobStorageContainer.GetBlobStorage(GetOrAddBlobIdPrefix<TStorable>(blobId), cancellationToken);
+            return await _blobStorageContainer.GetBlobStorage(GetOrAddBlobIdPrefix<TStorable>(storableId), cancellationToken);
         }
     }
 }

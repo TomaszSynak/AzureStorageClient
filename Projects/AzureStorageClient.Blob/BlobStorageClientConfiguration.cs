@@ -26,7 +26,6 @@ namespace AzureStorageClient
                 .Configure<BlobStorageClientSettings>(configurationSection);
 
             serviceCollection
-                .AddTransient<IStorageClient, BlobStorageClient>()
                 .AddTransient<IBlobStorageClient, BlobStorageClient>();
         }
     }

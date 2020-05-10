@@ -1,4 +1,4 @@
-﻿namespace AzureStorageClient.IntegrationTests
+﻿namespace AzureStorageClient.IntegrationTests.AzureBlobClient
 {
     using System;
     using System.Linq;
@@ -12,7 +12,7 @@
     {
         private readonly BlobStorageClient _blobStorageClient;
 
-        public BlobStorageClientTests() => _blobStorageClient = new BlobStorageClient(OptionsFactory.Create());
+        public BlobStorageClientTests() => _blobStorageClient = new BlobStorageClient(OptionsFactory.CreateBlobSettings());
 
         [Fact]
         public async Task UpsertAsync_ObjectUpsertCorrectly()

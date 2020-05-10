@@ -1,4 +1,4 @@
-﻿namespace AzureStorageClient.IntegrationTests
+﻿namespace AzureStorageClient.IntegrationTests.AzureBlobClient
 {
     using System;
     using System.Threading.Tasks;
@@ -16,7 +16,7 @@
 
         public BlobStorageTests()
         {
-            var options = OptionsFactory.Create();
+            var options = OptionsFactory.CreateBlobSettings();
             var blobName = Guid.NewGuid().ToString("D");
 
             _blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);

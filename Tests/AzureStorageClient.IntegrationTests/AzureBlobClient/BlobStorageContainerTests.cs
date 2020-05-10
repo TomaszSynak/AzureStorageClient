@@ -1,4 +1,4 @@
-﻿namespace AzureStorageClient.IntegrationTests
+﻿namespace AzureStorageClient.IntegrationTests.AzureBlobClient
 {
     using System;
     using System.Threading.Tasks;
@@ -14,7 +14,7 @@
         {
             // ToDo: use create resource attribute
             // Arrange
-            var options = OptionsFactory.Create(Guid.NewGuid().ToString("D"));
+            var options = OptionsFactory.CreateBlobSettings(Guid.NewGuid().ToString("D"));
             var blobStorageContainer = new BlobStorageContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
@@ -40,7 +40,7 @@
         public async Task GetBlobStorage_ContainerExists_ContainerCreated()
         {
             // Arrange
-            var options = OptionsFactory.Create();
+            var options = OptionsFactory.CreateBlobSettings();
             var blobStorageContainer = new BlobStorageContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
@@ -56,7 +56,7 @@
         public async Task GetBlobStorageList_ContainerExists_GetContainerContent()
         {
             // Arrange
-            var options = OptionsFactory.Create(containerName: "some-mock-container");
+            var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
             var blobStorageContainer = new BlobStorageContainer(options);
             var blobStorage = await blobStorageContainer.GetBlobStorage(Guid.NewGuid().ToString("D"));
             await blobStorage.Upload("Some mock blob content");
@@ -81,7 +81,7 @@
         public async Task GetBlobStorageList_ContainerContainsDeletedBlob_GetEmptyContent()
         {
             // Arrange
-            var options = OptionsFactory.Create(containerName: "some-mock-container");
+            var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
             var blobStorageContainer = new BlobStorageContainer(options);
 
             var blobName = Guid.NewGuid().ToString("D");

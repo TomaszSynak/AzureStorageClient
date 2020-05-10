@@ -1,4 +1,4 @@
-﻿namespace AzureStorageClient.IntegrationTests
+﻿namespace AzureStorageClient.IntegrationTests.Infrastructure
 {
     using System;
 
