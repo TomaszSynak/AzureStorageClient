@@ -5,11 +5,11 @@
     using Azure.Storage.Blobs;
     using AzureStorageClient;
 
-    internal class BlobStorageManager
+    internal class AzureBlobManager
     {
-        private readonly BlobStorageClientSettings _blobStorageClientSettings;
+        private readonly AzureBlobClientSettings _blobStorageClientSettings;
 
-        public BlobStorageManager() => _blobStorageClientSettings = ConfigurationProvider.GetBlobStorageClientSettings();
+        public AzureBlobManager() => _blobStorageClientSettings = ConfigurationProvider.GetBlobStorageClientSettings();
 
         public async Task SetUp() => await SetUpBlobStorage();
 

@@ -7,7 +7,7 @@
     using Xunit;
 
     [Collection(nameof(IntegrationTests))]
-    public class BlobStorageContainerTests
+    public class AzureBlobContainerTests
     {
         [Fact]
         public async Task GetBlobStorage_ContainerDoesNotExists_ContainerCreated()
@@ -15,7 +15,7 @@
             // ToDo: use create resource attribute
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(Guid.NewGuid().ToString("D"));
-            var blobStorageContainer = new BlobStorageContainer(options);
+            var blobStorageContainer = new AzureBlobContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
             var containerExists = (await blobContainerClient.ExistsAsync()).Value;
@@ -25,7 +25,7 @@
             }
 
             // Act
-            await blobStorageContainer.GetBlobStorage(Guid.NewGuid().ToString("D"));
+            await blobStorageContainer.GetAzureBlob(Guid.NewGuid().ToString("D"));
 
             // Assert
             containerExists = (await blobContainerClient.ExistsAsync()).Value;
@@ -36,16 +36,16 @@
         }
 
         [Fact]
-        [CleanBlobStorage]
+        [CleanAzureBlob]
         public async Task GetBlobStorage_ContainerExists_ContainerCreated()
         {
             // Arrange
             var options = OptionsFactory.CreateBlobSettings();
-            var blobStorageContainer = new BlobStorageContainer(options);
+            var blobStorageContainer = new AzureBlobContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
             // Act
-            await blobStorageContainer.GetBlobStorage(Guid.NewGuid().ToString("D"));
+            await blobStorageContainer.GetAzureBlob(Guid.NewGuid().ToString("D"));
 
             // Assert
             var containerExists = (await blobContainerClient.ExistsAsync()).Value;
@@ -57,12 +57,12 @@
         {
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
-            var blobStorageContainer = new BlobStorageContainer(options);
-            var blobStorage = await blobStorageContainer.GetBlobStorage(Guid.NewGuid().ToString("D"));
+            var blobStorageContainer = new AzureBlobContainer(options);
+            var blobStorage = await blobStorageContainer.GetAzureBlob(Guid.NewGuid().ToString("D"));
             await blobStorage.Upload("Some mock blob content");
 
             // Act
-            var blobStorageList = await blobStorageContainer.GetBlobStorageList();
+            var blobStorageList = await blobStorageContainer.GetAzureBlobList();
 
             // Assert
             Assert.NotEmpty(blobStorageList);
@@ -82,20 +82,20 @@
         {
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
-            var blobStorageContainer = new BlobStorageContainer(options);
+            var blobStorageContainer = new AzureBlobContainer(options);
 
             var blobName = Guid.NewGuid().ToString("D");
 
-            var blobStorage = await blobStorageContainer.GetBlobStorage(blobName);
+            var blobStorage = await blobStorageContainer.GetAzureBlob(blobName);
             await blobStorage.Upload("Some mock blob content");
 
             var blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);
-            var blobStorageMetadata = new BlobStorageMetadata();
+            var blobStorageMetadata = new AzureBlobMetadata();
             blobStorageMetadata.SetIsDeleted(true);
             await blobClient.SetMetadataAsync(blobStorageMetadata.Metadata);
 
             // Act
-            var blobStorageList = await blobStorageContainer.GetBlobStorageList();
+            var blobStorageList = await blobStorageContainer.GetAzureBlobList();
 
             // Assert
             Assert.Empty(blobStorageList);

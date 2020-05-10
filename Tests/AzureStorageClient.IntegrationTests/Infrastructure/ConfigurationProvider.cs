@@ -8,10 +8,10 @@
     {
         private static IConfigurationRoot _configurationRoot;
 
-        public static BlobStorageClientSettings GetBlobStorageClientSettings()
+        public static AzureBlobClientSettings GetBlobStorageClientSettings()
         {
-            var storageClientSettings = new BlobStorageClientSettings();
-            GetConfigurationRoot().GetSection(nameof(BlobStorageClientSettings)).Bind(storageClientSettings);
+            var storageClientSettings = new AzureBlobClientSettings();
+            GetConfigurationRoot().GetSection(nameof(AzureBlobClientSettings)).Bind(storageClientSettings);
             return storageClientSettings;
         }
 

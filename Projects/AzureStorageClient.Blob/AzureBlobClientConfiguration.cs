@@ -8,11 +8,11 @@ namespace AzureStorageClient
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
-    public static class BlobStorageClientConfiguration
+    public static class AzureBlobClientConfiguration
     {
-        private const string SettingsSection = nameof(BlobStorageClientSettings);
+        private const string SettingsSection = nameof(AzureBlobClientSettings);
 
-        public static void AddBlobStorageClient(this IServiceCollection serviceCollection, IConfiguration configuration)
+        public static void AddAzureBlobClient(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
             // Enable TLS 1.2 before connecting to Azure Storage
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -23,10 +23,10 @@ namespace AzureStorageClient
                      ?? throw new ArgumentNullException($"{SettingsSection} is missing from configuration.");
 
             serviceCollection
-                .Configure<BlobStorageClientSettings>(configurationSection);
+                .Configure<AzureBlobClientSettings>(configurationSection);
 
             serviceCollection
-                .AddTransient<IBlobStorageClient, BlobStorageClient>();
+                .AddTransient<IAzureBlobClient, AzureBlobClient>();
         }
     }
 }

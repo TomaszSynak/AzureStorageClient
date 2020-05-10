@@ -6,22 +6,22 @@
     using Infrastructure;
     using Xunit;
 
-    [CleanBlobStorage]
+    [CleanAzureBlob]
     [Collection(nameof(IntegrationTests))]
-    public class BlobStorageTests
+    public class AzureBlobTests
     {
-        private readonly BlobStorage _blobStorage;
+        private readonly AzureBlob _azureBlob;
 
         private readonly BlobClient _blobClient;
 
-        public BlobStorageTests()
+        public AzureBlobTests()
         {
             var options = OptionsFactory.CreateBlobSettings();
             var blobName = Guid.NewGuid().ToString("D");
 
             _blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);
 
-            _blobStorage = new BlobStorage(options, blobName);
+            _azureBlob = new AzureBlob(options, blobName);
         }
 
         [Fact]
@@ -29,10 +29,10 @@
         {
             // Arrange
             var (_, serialized, converted) = TestModelFactory.Create();
-            var blobHeaders = BlobHeadersFactory.Create(converted);
+            var blobHeaders = AzureBlobHeadersFactory.Create(converted);
 
             // Act
-            await _blobStorage.Upload(serialized);
+            await _azureBlob.Upload(serialized);
 
             // Assert
             var blobProperties = (await _blobClient.GetPropertiesAsync()).Value;
@@ -52,7 +52,7 @@
             var (_, serialized, _) = TestModelFactory.Create();
 
             // Act
-            await _blobStorage.Upload(serialized);
+            await _azureBlob.Upload(serialized);
 
             // Assert
             var blobExists = (await _blobClient.ExistsAsync()).Value;
@@ -66,11 +66,11 @@
             var (_, serialized, _) = TestModelFactory.Create();
 
             // Act
-            await _blobStorage.Upload(serialized);
+            await _azureBlob.Upload(serialized);
 
             // Assert
             var blobProperties = (await _blobClient.GetPropertiesAsync()).Value;
-            var blobStorageMetadata = new BlobStorageMetadata(blobProperties.Metadata);
+            var blobStorageMetadata = new AzureBlobMetadata(blobProperties.Metadata);
             Assert.True(blobStorageMetadata.IsNotDeleted());
             Assert.False(blobStorageMetadata.IsDeleted());
         }
@@ -80,10 +80,10 @@
         {
             // Arrange
             var (testModel, serialized, _) = TestModelFactory.Create();
-            await _blobStorage.Upload(serialized);
+            await _azureBlob.Upload(serialized);
 
             // Act
-            var downloadedContent = await _blobStorage.Download();
+            var downloadedContent = await _azureBlob.Download();
             var deserializedContent = downloadedContent.Deserialize<TestModel>();
 
             // Assert
@@ -95,7 +95,7 @@
         public async Task Download_BlobDoesNotExist_ExceptionThrown()
         {
             // Arrange
-            async Task MethodUnderTest() => await _blobStorage.Download();
+            async Task MethodUnderTest() => await _azureBlob.Download();
 
             // Act
             var exception = await Record.ExceptionAsync(MethodUnderTest);
@@ -109,12 +109,12 @@
         {
             // Arrange
             var (testModel, serialized, _) = TestModelFactory.Create();
-            await _blobStorage.Upload(serialized);
-            var blobStorageMetadata = new BlobStorageMetadata();
+            await _azureBlob.Upload(serialized);
+            var blobStorageMetadata = new AzureBlobMetadata();
             blobStorageMetadata.SetIsDeleted(true);
             await _blobClient.SetMetadataAsync(blobStorageMetadata.Metadata);
 
-            async Task MethodUnderTest() => await _blobStorage.Download();
+            async Task MethodUnderTest() => await _azureBlob.Download();
 
             // Act
             var exception = await Record.ExceptionAsync(MethodUnderTest);
@@ -123,7 +123,7 @@
             Assert.IsType<Exception>(exception);
 
             var blobProperties = (await _blobClient.GetPropertiesAsync()).Value;
-            blobStorageMetadata = new BlobStorageMetadata(blobProperties.Metadata);
+            blobStorageMetadata = new AzureBlobMetadata(blobProperties.Metadata);
             Assert.False(blobStorageMetadata.IsNotDeleted());
             Assert.True(blobStorageMetadata.IsDeleted());
         }
@@ -133,10 +133,10 @@
         {
             // Arrange
             var (_, serialized, _) = TestModelFactory.Create();
-            await _blobStorage.Upload(serialized);
+            await _azureBlob.Upload(serialized);
 
             // Act
-            await _blobStorage.Delete();
+            await _azureBlob.Delete();
 
             // Assert
             var blobExists = (await _blobClient.ExistsAsync()).Value;
@@ -148,7 +148,7 @@
         public async Task Delete_BlobDoesNotExist_DoesNotThrowException()
         {
             // Arrange
-            async Task MethodUnderTest() => await _blobStorage.Delete();
+            async Task MethodUnderTest() => await _azureBlob.Delete();
 
             // Act
             var exception = await Record.ExceptionAsync(MethodUnderTest);

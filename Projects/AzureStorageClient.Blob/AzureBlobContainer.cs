@@ -9,11 +9,11 @@
     using Azure.Storage.Blobs.Models;
     using Microsoft.Extensions.Options;
 
-    internal class BlobStorageContainer
+    internal class AzureBlobContainer
     {
         private readonly BlobContainerClient _blobContainerClient;
 
-        public BlobStorageContainer(IOptions<BlobStorageClientSettings> options)
+        public AzureBlobContainer(IOptions<AzureBlobClientSettings> options)
             => _blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
         public async Task<bool> IsAccessible(CancellationToken cancellationToken = default)
@@ -35,14 +35,14 @@
             }
         }
 
-        public async Task<BlobStorage> GetBlobStorage(string blobId, CancellationToken cancellationToken = default)
+        public async Task<AzureBlob> GetAzureBlob(string blobId, CancellationToken cancellationToken = default)
         {
             await Initialize(cancellationToken);
 
-            return new BlobStorage(_blobContainerClient.GetBlobClient(blobId));
+            return new AzureBlob(_blobContainerClient.GetBlobClient(blobId));
         }
 
-        public async Task<ImmutableList<BlobStorage>> GetBlobStorageList(string prefix = null, CancellationToken cancellationToken = default)
+        public async Task<ImmutableList<AzureBlob>> GetAzureBlobList(string prefix = null, CancellationToken cancellationToken = default)
         {
             await Initialize(cancellationToken);
 
@@ -53,15 +53,15 @@
                 blobItemList.AddRange(blobsToList);
             }
 
-            var blobStorageList = blobItemList.Select(bi => new BlobStorage(_blobContainerClient.GetBlobClient(bi.Name))).ToImmutableList();
+            var azureBlobList = blobItemList.Select(bi => new AzureBlob(_blobContainerClient.GetBlobClient(bi.Name))).ToImmutableList();
 
-            return blobStorageList;
+            return azureBlobList;
         }
 
         private static bool IsBlobNotDeleted(BlobItem blobItem)
         {
-            var blobStorageMetadata = new BlobStorageMetadata(blobItem.Metadata);
-            return blobStorageMetadata.IsNotDeleted();
+            var azureBlobMetadata = new AzureBlobMetadata(blobItem.Metadata);
+            return azureBlobMetadata.IsNotDeleted();
         }
     }
 }

@@ -5,11 +5,11 @@
     using Xunit.Sdk;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    internal sealed class CleanBlobStorageAttribute : BeforeAfterTestAttribute
+    internal sealed class CleanAzureBlobAttribute : BeforeAfterTestAttribute
     {
-        private readonly BlobStorageManager _blobStorageManager;
+        private readonly AzureBlobManager _blobStorageManager;
 
-        public CleanBlobStorageAttribute() => _blobStorageManager = new BlobStorageManager();
+        public CleanAzureBlobAttribute() => _blobStorageManager = new AzureBlobManager();
 
         public override void Before(MethodInfo methodUnderTest) => _blobStorageManager.SetUp().GetAwaiter().GetResult();
 

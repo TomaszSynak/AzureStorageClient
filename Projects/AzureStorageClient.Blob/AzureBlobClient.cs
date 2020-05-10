@@ -7,47 +7,47 @@
     using System.Threading.Tasks;
     using Microsoft.Extensions.Options;
 
-    internal class BlobStorageClient : IBlobStorageClient
+    internal class AzureBlobClient : IAzureBlobClient
     {
         // ToDo: add performance tests
-        private readonly BlobStorageContainer _blobStorageContainer;
+        private readonly AzureBlobContainer _azureBlobContainer;
 
-        public BlobStorageClient(IOptions<BlobStorageClientSettings> options)
+        public AzureBlobClient(IOptions<AzureBlobClientSettings> options)
         {
             // ToDo: verify that settings are neither null nor empty
-            _blobStorageContainer = BlobStorageContainerFactory.Create(options);
+            _azureBlobContainer = AzureBlobContainerFactory.Create(options);
         }
 
         public async Task<bool> IsAccessible(CancellationToken cancellationToken = default)
-            => await _blobStorageContainer.IsAccessible(cancellationToken);
+            => await _azureBlobContainer.IsAccessible(cancellationToken);
 
         public async Task UpsertAsync<TStorable>(TStorable objectToUpsert, CancellationToken cancellationToken = default)
-            where TStorable : class, IStorable, new()
+            where TStorable : class, IBlobStorable, new()
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(objectToUpsert.BlobId, cancellationToken);
+                var azureBlob = await GetAzureBlob<TStorable>(objectToUpsert.StorableId, cancellationToken);
 
-                var blobStringContent = objectToUpsert.Serialize();
+                var azureBlobStringContent = objectToUpsert.Serialize();
 
-                await blobStorage.Upload(blobStringContent, cancellationToken);
+                await azureBlob.Upload(azureBlobStringContent, cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to UPSERT blob {objectToUpsert.BlobId}. ", exception);
+                throw new Exception($"Failed to UPSERT blob {objectToUpsert.StorableId}. ", exception);
             }
         }
 
         public async Task<TStorable> GetAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
-            where TStorable : class, IStorable, new()
+            where TStorable : class, IBlobStorable, new()
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(storableId, cancellationToken);
+                var azureBlob = await GetAzureBlob<TStorable>(storableId, cancellationToken);
 
-                var blobStringContent = await blobStorage.Download(cancellationToken);
+                var azureBlobStringContent = await azureBlob.Download(cancellationToken);
 
-                return blobStringContent.Deserialize<TStorable>();
+                return azureBlobStringContent.Deserialize<TStorable>();
             }
             catch (Exception exception)
             {
@@ -56,7 +56,7 @@
         }
 
         public async Task<ImmutableList<TStorable>> GetListAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
-            where TStorable : class, IStorable, new()
+            where TStorable : class, IBlobStorable, new()
         {
             // ToDo: add performance tests
             // ToDo: let prefix be marked with attribute instead of passing it as parameter
@@ -64,13 +64,13 @@
             // ToDo: what if list would be empty?
             try
             {
-                var blobStorageList = await _blobStorageContainer.GetBlobStorageList(GetOrAddBlobIdPrefix<TStorable>(prefix), cancellationToken);
+                var azureBlobList = await _azureBlobContainer.GetAzureBlobList(GetOrAddBlobIdPrefix<TStorable>(prefix), cancellationToken);
 
-                var downloadingBlobStringContent = blobStorageList.Select(ab => ab.Download(cancellationToken)).ToList();
+                var downloadingAzureBlobStringContent = azureBlobList.Select(ab => ab.Download(cancellationToken)).ToList();
 
-                await Task.WhenAll(downloadingBlobStringContent);
+                await Task.WhenAll(downloadingAzureBlobStringContent);
 
-                return downloadingBlobStringContent.Select(bsc => bsc.Result.Deserialize<TStorable>()).ToImmutableList();
+                return downloadingAzureBlobStringContent.Select(bsc => bsc.Result.Deserialize<TStorable>()).ToImmutableList();
             }
             catch (Exception exception)
             {
@@ -79,12 +79,12 @@
         }
 
         public async Task SoftDeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
-            where TStorable : class, IStorable, new()
+            where TStorable : class, IBlobStorable, new()
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(storableId, cancellationToken);
-                await blobStorage.SetIsDeleted(true, cancellationToken);
+                var azureBlob = await GetAzureBlob<TStorable>(storableId, cancellationToken);
+                await azureBlob.SetIsDeleted(true, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -93,12 +93,12 @@
         }
 
         public async Task RevertSoftDeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
-            where TStorable : class, IStorable, new()
+            where TStorable : class, IBlobStorable, new()
         {
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(storableId, cancellationToken);
-                await blobStorage.SetIsDeleted(false, cancellationToken);
+                var azureBlob = await GetAzureBlob<TStorable>(storableId, cancellationToken);
+                await azureBlob.SetIsDeleted(false, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -107,14 +107,14 @@
         }
 
         public async Task DeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
-            where TStorable : class, IStorable, new()
+            where TStorable : class, IBlobStorable, new()
         {
             // ToDo: make sure that storableId is the one from TStorable, as user intended
             try
             {
-                var blobStorage = await GetBlobStorage<TStorable>(storableId, cancellationToken);
+                var azureBlob = await GetAzureBlob<TStorable>(storableId, cancellationToken);
 
-                await blobStorage.Delete(cancellationToken: cancellationToken);
+                await azureBlob.Delete(cancellationToken: cancellationToken);
             }
             catch (Exception exception)
             {
@@ -127,10 +127,10 @@
                 ? $"{typeof(TStorable).Name}"
                 : $"{typeof(TStorable).Name}/{storableId}";
 
-        private async Task<BlobStorage> GetBlobStorage<TStorable>(string storableId, CancellationToken cancellationToken = default)
-            where TStorable : class, IStorable, new()
+        private async Task<AzureBlob> GetAzureBlob<TStorable>(string storableId, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable, new()
         {
-            return await _blobStorageContainer.GetBlobStorage(GetOrAddBlobIdPrefix<TStorable>(storableId), cancellationToken);
+            return await _azureBlobContainer.GetAzureBlob(GetOrAddBlobIdPrefix<TStorable>(storableId), cancellationToken);
         }
     }
 }

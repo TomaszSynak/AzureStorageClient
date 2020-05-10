@@ -4,7 +4,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public interface IBlobStorageClient
+    public interface IAzureBlobClient
     {
         Task<bool> IsAccessible(CancellationToken cancellationToken = default);
 
