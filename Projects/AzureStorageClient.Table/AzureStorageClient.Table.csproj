@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Authors>Tomasz Synak</Authors>
+		<Description>Client to Azure Table Storage</Description>
+
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
+		<PackageId>AzureStorageClient.Blob</PackageId>
+		<Version>0.0.1</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageTags></PackageTags>
+		<Platforms>x64</Platforms>
+
+		<RootNamespace>AzureStorageClient</RootNamespace>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<NoWarn></NoWarn>
+		<WarningsAsErrors />
+		<CodeAnalysisRuleSet>../../AzureStorageClient.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.7" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.164">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.Collections.Immutable" Version="1.7.0" />
+	</ItemGroup>
+</Project>

@@ -6,12 +6,25 @@
 
     internal class OptionsFactory
     {
-        public static IOptions<StorageClientSettings> Create(string containerName = null)
+        public static IOptions<AzureBlobClientSettings> CreateBlobSettings(string containerName = null)
         {
-            var optionMock = new Mock<IOptions<StorageClientSettings>>();
+            var optionMock = new Mock<IOptions<AzureBlobClientSettings>>();
 
-            var settings = ConfigurationProvider.GetStorageClientSettings();
+            var settings = ConfigurationProvider.GetBlobStorageClientSettings();
             settings.ContainerName = containerName ?? settings.ContainerName;
+
+            optionMock
+                .Setup(o => o.Value)
+                .Returns(settings);
+
+            return optionMock.Object;
+        }
+
+        public static IOptions<AzureTableClientSettings> CreateTableSettings()
+        {
+            var optionMock = new Mock<IOptions<AzureTableClientSettings>>();
+
+            var settings = ConfigurationProvider.GetTableStorageClientSettings();
 
             optionMock
                 .Setup(o => o.Value)

@@ -8,10 +8,17 @@
     {
         private static IConfigurationRoot _configurationRoot;
 
-        public static StorageClientSettings GetStorageClientSettings()
+        public static AzureBlobClientSettings GetBlobStorageClientSettings()
         {
-            var storageClientSettings = new StorageClientSettings();
-            GetConfigurationRoot().GetSection(nameof(StorageClientSettings)).Bind(storageClientSettings);
+            var storageClientSettings = new AzureBlobClientSettings();
+            GetConfigurationRoot().GetSection(nameof(AzureBlobClientSettings)).Bind(storageClientSettings);
+            return storageClientSettings;
+        }
+
+        public static AzureTableClientSettings GetTableStorageClientSettings()
+        {
+            var storageClientSettings = new AzureTableClientSettings();
+            GetConfigurationRoot().GetSection(nameof(AzureTableClientSettings)).Bind(storageClientSettings);
             return storageClientSettings;
         }
 

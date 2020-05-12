@@ -17,7 +17,7 @@
 
         private BlobProperties _blobProperties;
 
-        public AzureBlob(IOptions<StorageClientSettings> options, string blobName)
+        public AzureBlob(IOptions<AzureBlobClientSettings> options, string blobName)
         {
             _blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);
             _azureBlobMetadata = new AzureBlobMetadata();
@@ -40,7 +40,7 @@
                 await memoryStream.WriteAsync(blobByteContent, 0, blobByteContent.Length, cancellationToken);
                 memoryStream.Position = 0;
 
-                await _blobClient.UploadAsync(memoryStream, BlobHeadersFactory.Create(blobByteContent), _azureBlobMetadata.Metadata, cancellationToken: cancellationToken);
+                await _blobClient.UploadAsync(memoryStream, AzureBlobHeadersFactory.Create(blobByteContent), _azureBlobMetadata.Metadata, cancellationToken: cancellationToken);
                 await RefreshPropertiesAsync(cancellationToken);
             }
         }

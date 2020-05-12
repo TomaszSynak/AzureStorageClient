@@ -1,8 +1,8 @@
 ﻿namespace AzureStorageClient
 {
-    public interface IStorable
+    public interface IBlobStorable
     {
         // ToDo: name of storable entity/userId/resourceId
-        string BlobId { get; }
+        string StorableId { get; }
     }
 }

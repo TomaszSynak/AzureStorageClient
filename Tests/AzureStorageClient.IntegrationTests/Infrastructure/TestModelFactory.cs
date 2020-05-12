@@ -1,4 +1,4 @@
-﻿namespace AzureStorageClient.IntegrationTests
+﻿namespace AzureStorageClient.IntegrationTests.Infrastructure
 {
     using System;
 
@@ -10,7 +10,8 @@
             {
                 Id = Guid.NewGuid().ToString("D"),
                 AdditionalId = Guid.NewGuid().ToString("D"),
-                Value = $"SomeValueWithPolishLetters ł ą ę ó ź ż ć ś - {Guid.NewGuid():D}"
+                Value = $"SomeValueWithPolishLetters ł ą ę ó ź ż ć ś - {Guid.NewGuid():D}",
+                AzureTableId = Guid.NewGuid()
             };
 
             var serialized = model.Serialize();
@@ -24,7 +25,8 @@
             var model = new TestModel
             {
                 Id = Guid.NewGuid().ToString("D"),
-                Value = $"SomeMockValueToTestUpsert ł ą ę ó ź ż ć ś -{Guid.NewGuid():D}"
+                Value = $"SomeMockValueToTestUpsert ł ą ę ó ź ż ć ś -{Guid.NewGuid():D}",
+                AzureTableId = Guid.NewGuid()
             };
 
             var serialized = model.Serialize();

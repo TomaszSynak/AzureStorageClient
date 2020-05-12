@@ -13,7 +13,7 @@
     {
         private readonly BlobContainerClient _blobContainerClient;
 
-        public AzureBlobContainer(IOptions<StorageClientSettings> options)
+        public AzureBlobContainer(IOptions<AzureBlobClientSettings> options)
             => _blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
         public async Task<bool> IsAccessible(CancellationToken cancellationToken = default)

@@ -4,7 +4,7 @@
 
     internal static class AzureBlobContainerFactory
     {
-        public static AzureBlobContainer Create(IOptions<StorageClientSettings> options)
+        public static AzureBlobContainer Create(IOptions<AzureBlobClientSettings> options)
         {
             var azureBlobContainer = new AzureBlobContainer(options);
             azureBlobContainer.Initialize();

@@ -3,7 +3,7 @@
     using System.Security.Cryptography;
     using Azure.Storage.Blobs.Models;
 
-    internal class BlobHeadersFactory
+    internal class AzureBlobHeadersFactory
     {
         public static BlobHttpHeaders Create(byte[] blobStringContent)
         {

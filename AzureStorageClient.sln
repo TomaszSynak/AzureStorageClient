@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageClient", "Projects\AzureStorageClient\AzureStorageClient.csproj", "{3B38928B-9B41-4808-B727-65D818583ED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageClient.Blob", "Projects\AzureStorageClient.Blob\AzureStorageClient.Blob.csproj", "{3B38928B-9B41-4808-B727-65D818583ED3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{04AA9A55-9AE9-4388-82DC-93F2C6CF8E12}"
 EndProject
@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".slnResources", ".slnResour
 		AzureStorageClient.ruleset = AzureStorageClient.ruleset
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageClient.Table", "Projects\AzureStorageClient.Table\AzureStorageClient.Table.csproj", "{D6564434-595B-4C10-B292-67471B7A236F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859}.Debug|x64.Build.0 = Debug|x64
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859}.Release|x64.ActiveCfg = Release|x64
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859}.Release|x64.Build.0 = Release|x64
+		{D6564434-595B-4C10-B292-67471B7A236F}.Debug|x64.ActiveCfg = Debug|x64
+		{D6564434-595B-4C10-B292-67471B7A236F}.Debug|x64.Build.0 = Debug|x64
+		{D6564434-595B-4C10-B292-67471B7A236F}.Release|x64.ActiveCfg = Release|x64
+		{D6564434-595B-4C10-B292-67471B7A236F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3B38928B-9B41-4808-B727-65D818583ED3} = {04AA9A55-9AE9-4388-82DC-93F2C6CF8E12}
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859} = {801744BC-B403-4E9E-93AA-E0B32D8B0447}
+		{D6564434-595B-4C10-B292-67471B7A236F} = {04AA9A55-9AE9-4388-82DC-93F2C6CF8E12}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9CDA2F1B-7B6A-4F50-BB2B-9F5D8DBFD24C}
