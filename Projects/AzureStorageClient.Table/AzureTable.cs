@@ -16,7 +16,20 @@
 
         public AzureTable(CloudTable cloudTable) => _cloudTable = cloudTable;
 
-        public static string GetPartitionKey() => $"{typeof(TStorable).Name}";
+        public static string GetPartitionKey(Guid? azureTablePartitionId)
+            => azureTablePartitionId.HasValue ? $"{azureTablePartitionId:N}" : $"{typeof(TStorable).Name}";
+
+        public static string GetRowKey(Guid azureTableRowId)
+        {
+            // ToDo: check RowKey limits and disallowed characters
+            var rowKey = $"{azureTableRowId:N}";
+            if (Encoding.UTF8.GetByteCount(rowKey) > 1024)
+            {
+                throw new Exception("RowKey to big");
+            }
+
+            return rowKey;
+        }
 
         public async Task Initialize(CancellationToken cancellationToken = default)
         {
@@ -30,42 +43,28 @@
 
         public async Task<bool> IsAccessible(CancellationToken cancellationToken = default) => await _cloudTable.ExistsAsync(cancellationToken);
 
-        public async Task Upsert(TStorable objectToUpsert, CancellationToken cancellationToken = default)
+        public async Task Upsert(TStorable objectToUpsert, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
         {
-            objectToUpsert.PartitionKey = GetPartitionKey();
-            objectToUpsert.RowKey = objectToUpsert.AzureTableRowId.ToString("N");
-
-            if (Encoding.UTF8.GetByteCount(objectToUpsert.RowKey) > 1024)
-            {
-                throw new Exception("RowKey to big");
-            }
+            objectToUpsert.PartitionKey = GetPartitionKey(azureTablePartitionId);
+            objectToUpsert.RowKey = GetRowKey(objectToUpsert.AzureTableRowId);
 
             var upsertOperation = TableOperation.InsertOrReplace(objectToUpsert);
 
             await _cloudTable.ExecuteAsync(upsertOperation, cancellationToken);
         }
 
-        public async Task<TStorable> Get(Guid azureTableRowId, CancellationToken cancellationToken = default)
+        public async Task<TStorable> Get(Guid azureTableRowId, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
         {
-            // ToDo: check RowKey limits and disallowed characters
-            var rowKey = azureTableRowId.ToString("N");
-            if (Encoding.UTF8.GetByteCount(rowKey) > 1024)
-            {
-                throw new Exception("RowKey to big");
-            }
-
-            var getOperation = TableOperation.Retrieve<TStorable>(GetPartitionKey(), rowKey);
+            var getOperation = TableOperation.Retrieve<TStorable>(GetPartitionKey(azureTablePartitionId), GetRowKey(azureTableRowId));
 
             var result = await _cloudTable.ExecuteAsync(getOperation, cancellationToken);
 
             return result.Result as TStorable;
         }
 
-        public async Task<ImmutableList<TStorable>> GetList(string prefix = null, CancellationToken cancellationToken = default)
+        public async Task<ImmutableList<TStorable>> GetList(Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
         {
-            prefix = prefix ?? GetPartitionKey();
-
-            var filter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, prefix);
+            var filter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, GetPartitionKey(azureTablePartitionId));
 
             var query = new TableQuery<TStorable>().Where(filter).AsTableQuery();
 
@@ -84,18 +83,18 @@
             return result.ToImmutableList();
         }
 
-        public async Task SetIsDeleted(Guid azureTableRowId, bool isDeleted, CancellationToken cancellationToken = default)
+        public async Task SetIsDeleted(Guid azureTableRowId, bool isDeleted, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
         {
-            var objectToSoftDelete = await Get(azureTableRowId, cancellationToken);
+            var objectToSoftDelete = await Get(azureTableRowId, azureTablePartitionId, cancellationToken);
 
             objectToSoftDelete.IsDeleted = isDeleted;
 
-            await Upsert(objectToSoftDelete, cancellationToken);
+            await Upsert(objectToSoftDelete, azureTablePartitionId, cancellationToken);
         }
 
-        public async Task Delete(Guid azureTableId, CancellationToken cancellationToken = default)
+        public async Task Delete(Guid azureTableRowId, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
         {
-            var objectToDelete = await Get(azureTableId, cancellationToken);
+            var objectToDelete = await Get(azureTableRowId, azureTablePartitionId, cancellationToken);
 
             var deleteOperation = TableOperation.Delete(objectToDelete);
 

@@ -26,14 +26,14 @@
                 .IsAccessible(cancellationToken);
         }
 
-        public async Task UpsertAsync<TStorable>(TStorable objectToUpsert, CancellationToken cancellationToken = default)
+        public async Task UpsertAsync<TStorable>(TStorable objectToUpsert, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .Upsert(objectToUpsert, cancellationToken);
+                    .Upsert(objectToUpsert, azureTablePartitionId, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -41,14 +41,14 @@
             }
         }
 
-        public async Task<TStorable> GetAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
+        public async Task<TStorable> GetAsync<TStorable>(Guid azureTableRowId, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 return await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .Get(azureTableRowId, cancellationToken);
+                    .Get(azureTableRowId, azureTablePartitionId, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -56,29 +56,29 @@
             }
         }
 
-        public async Task<ImmutableList<TStorable>> GetListAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
+        public async Task<ImmutableList<TStorable>> GetListAsync<TStorable>(Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 return await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .GetList(prefix, cancellationToken);
+                    .GetList(azureTablePartitionId, cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to GET entities with prefix {prefix}. ", exception);
+                throw new Exception($"Failed to GET entities with prefix {azureTablePartitionId}. ", exception);
             }
         }
 
-        public async Task SoftDeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
+        public async Task SoftDeleteAsync<TStorable>(Guid azureTableRowId, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .SetIsDeleted(azureTableRowId, true, cancellationToken);
+                    .SetIsDeleted(azureTableRowId, true, azureTablePartitionId, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -86,14 +86,14 @@
             }
         }
 
-        public async Task RevertSoftDeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
+        public async Task RevertSoftDeleteAsync<TStorable>(Guid azureTableRowId, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .SetIsDeleted(azureTableRowId, false, cancellationToken);
+                    .SetIsDeleted(azureTableRowId, false, azureTablePartitionId, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -101,14 +101,14 @@
             }
         }
 
-        public async Task DeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync<TStorable>(Guid azureTableRowId, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .Delete(azureTableRowId, cancellationToken);
+                    .Delete(azureTableRowId, azureTablePartitionId, cancellationToken);
             }
             catch (Exception exception)
             {
