@@ -33,7 +33,7 @@
         public async Task Upsert(TStorable objectToUpsert, CancellationToken cancellationToken = default)
         {
             objectToUpsert.PartitionKey = GetPartitionKey();
-            objectToUpsert.RowKey = objectToUpsert.AzureTableId.ToString("N");
+            objectToUpsert.RowKey = objectToUpsert.AzureTableRowId.ToString("N");
 
             if (Encoding.UTF8.GetByteCount(objectToUpsert.RowKey) > 1024)
             {
@@ -45,10 +45,10 @@
             await _cloudTable.ExecuteAsync(upsertOperation, cancellationToken);
         }
 
-        public async Task<TStorable> Get(Guid azureTableId, CancellationToken cancellationToken = default)
+        public async Task<TStorable> Get(Guid azureTableRowId, CancellationToken cancellationToken = default)
         {
             // ToDo: check RowKey limits and disallowed characters
-            var rowKey = azureTableId.ToString("N");
+            var rowKey = azureTableRowId.ToString("N");
             if (Encoding.UTF8.GetByteCount(rowKey) > 1024)
             {
                 throw new Exception("RowKey to big");
@@ -84,9 +84,9 @@
             return result.ToImmutableList();
         }
 
-        public async Task SetIsDeleted(Guid azureTableId, bool isDeleted, CancellationToken cancellationToken = default)
+        public async Task SetIsDeleted(Guid azureTableRowId, bool isDeleted, CancellationToken cancellationToken = default)
         {
-            var objectToSoftDelete = await Get(azureTableId, cancellationToken);
+            var objectToSoftDelete = await Get(azureTableRowId, cancellationToken);
 
             objectToSoftDelete.IsDeleted = isDeleted;
 

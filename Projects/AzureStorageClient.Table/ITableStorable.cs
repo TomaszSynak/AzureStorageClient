@@ -5,7 +5,7 @@
 
     public interface ITableStorable : ITableEntity
     {
-        Guid AzureTableId { get; }
+        Guid AzureTableRowId { get; }
 
         bool IsDeleted { get; set; }
     }

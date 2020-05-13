@@ -37,22 +37,22 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to UPSERT entity {objectToUpsert.AzureTableId}. ", exception);
+                throw new Exception($"Failed to UPSERT entity {objectToUpsert.AzureTableRowId}. ", exception);
             }
         }
 
-        public async Task<TStorable> GetAsync<TStorable>(Guid azureTableId, CancellationToken cancellationToken = default)
+        public async Task<TStorable> GetAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 return await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .Get(azureTableId, cancellationToken);
+                    .Get(azureTableRowId, cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to GET entity {azureTableId}. ", exception);
+                throw new Exception($"Failed to GET entity {azureTableRowId}. ", exception);
             }
         }
 
@@ -71,48 +71,48 @@
             }
         }
 
-        public async Task SoftDeleteAsync<TStorable>(Guid azureTableId, CancellationToken cancellationToken = default)
+        public async Task SoftDeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .SetIsDeleted(azureTableId, true, cancellationToken);
+                    .SetIsDeleted(azureTableRowId, true, cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to SOFT DELETE entity {azureTableId}. ", exception);
+                throw new Exception($"Failed to SOFT DELETE entity {azureTableRowId}. ", exception);
             }
         }
 
-        public async Task RevertSoftDeleteAsync<TStorable>(Guid azureTableId, CancellationToken cancellationToken = default)
+        public async Task RevertSoftDeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .SetIsDeleted(azureTableId, false, cancellationToken);
+                    .SetIsDeleted(azureTableRowId, false, cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to REVERT SOFT DELETE entity {azureTableId}. ", exception);
+                throw new Exception($"Failed to REVERT SOFT DELETE entity {azureTableRowId}. ", exception);
             }
         }
 
-        public async Task DeleteAsync<TStorable>(Guid azureTableId, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new()
         {
             try
             {
                 await _azureTableContainer
                     .GetAzureTable<TStorable>()
-                    .Delete(azureTableId, cancellationToken);
+                    .Delete(azureTableRowId, cancellationToken);
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to DELETE entity {azureTableId}. ", exception);
+                throw new Exception($"Failed to DELETE entity {azureTableRowId}. ", exception);
             }
         }
     }

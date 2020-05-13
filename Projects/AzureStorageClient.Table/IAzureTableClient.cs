@@ -13,19 +13,19 @@
         Task UpsertAsync<TStorable>(TStorable objectToUpsert, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new();
 
-        Task<TStorable> GetAsync<TStorable>(Guid azureTableId, CancellationToken cancellationToken = default)
+        Task<TStorable> GetAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new();
 
         Task<ImmutableList<TStorable>> GetListAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new();
 
-        Task SoftDeleteAsync<TStorable>(Guid azureTableId, CancellationToken cancellationToken = default)
+        Task SoftDeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new();
 
-        Task RevertSoftDeleteAsync<TStorable>(Guid azureTableId, CancellationToken cancellationToken = default)
+        Task RevertSoftDeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new();
 
-        Task DeleteAsync<TStorable>(Guid azureTableId, CancellationToken cancellationToken = default)
+        Task DeleteAsync<TStorable>(Guid azureTableRowId, CancellationToken cancellationToken = default)
             where TStorable : class, ITableStorable, new();
     }
 }

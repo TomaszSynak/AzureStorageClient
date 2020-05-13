@@ -37,7 +37,7 @@
             await _azureTableClient.UpsertAsync(testModel);
 
             // Assert
-            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableId);
+            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableRowId);
             Assert.NotNull(storableEntity);
         }
 
@@ -49,7 +49,7 @@
             await _azureTableClient.UpsertAsync(testModel);
 
             // Act
-            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableId);
+            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableRowId);
 
             // Assert
             Assert.NotNull(storableEntity);
@@ -57,7 +57,7 @@
             Assert.Equal(testModel.Value, storableEntity.Value);
             Assert.Equal(testModel.IsDeleted, storableEntity.IsDeleted);
             Assert.Equal(testModel.AdditionalId, storableEntity.AdditionalId);
-            Assert.Equal(testModel.AzureTableId, storableEntity.AzureTableId);
+            Assert.Equal(testModel.AzureTableRowId, storableEntity.AzureTableRowId);
         }
 
         [Fact]
@@ -78,7 +78,7 @@
             Assert.Equal(testModel.Value, newlyCreatedStorableEntity.Value);
             Assert.Equal(testModel.IsDeleted, newlyCreatedStorableEntity.IsDeleted);
             Assert.Equal(testModel.AdditionalId, newlyCreatedStorableEntity.AdditionalId);
-            Assert.Equal(testModel.AzureTableId, newlyCreatedStorableEntity.AzureTableId);
+            Assert.Equal(testModel.AzureTableRowId, newlyCreatedStorableEntity.AzureTableRowId);
         }
 
         [Fact]
@@ -90,10 +90,10 @@
             await _azureTableClient.UpsertAsync(testModel);
 
             // Act
-            await _azureTableClient.SoftDeleteAsync<TestModel>(testModel.AzureTableId);
+            await _azureTableClient.SoftDeleteAsync<TestModel>(testModel.AzureTableRowId);
 
             // Assert
-            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableId);
+            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableRowId);
             Assert.NotNull(storableEntity);
             Assert.True(storableEntity.IsDeleted);
         }
@@ -107,10 +107,10 @@
             await _azureTableClient.UpsertAsync(testModel);
 
             // Act
-            await _azureTableClient.RevertSoftDeleteAsync<TestModel>(testModel.AzureTableId);
+            await _azureTableClient.RevertSoftDeleteAsync<TestModel>(testModel.AzureTableRowId);
 
             // Assert
-            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableId);
+            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableRowId);
             Assert.NotNull(storableEntity);
             Assert.False(storableEntity.IsDeleted);
         }
@@ -123,10 +123,10 @@
             await _azureTableClient.UpsertAsync(testModel);
 
             // Act
-            await _azureTableClient.DeleteAsync<TestModel>(testModel.AzureTableId);
+            await _azureTableClient.DeleteAsync<TestModel>(testModel.AzureTableRowId);
 
             // Assert
-            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableId);
+            var storableEntity = await _azureTableClient.GetAsync<TestModel>(testModel.AzureTableRowId);
             Assert.Null(storableEntity);
         }
     }
