@@ -3,6 +3,12 @@
 	<PropertyGroup>
 		<Authors>Tomasz Synak</Authors>
 		<Description>Client to Azure Blob Storage</Description>
+		<PackageProjectUrl>https://github.com/TomaszSynak/AzureStorageClient</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/TomaszSynak/AzureStorageClient</RepositoryUrl>
+
+		<Copyright>MIT License</Copyright>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<RepositoryType>Git</RepositoryType>
 
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<PackageId>AzureStorageClient.Blob</PackageId>
@@ -29,5 +35,12 @@
 		</PackageReference>
 		<PackageReference Include="System.Collections.Immutable" Version="1.7.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath></PackagePath>
+	  </None>
 	</ItemGroup>
 </Project>
