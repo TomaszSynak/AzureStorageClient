@@ -11,7 +11,7 @@
                 Id = Guid.NewGuid().ToString("D"),
                 AdditionalId = Guid.NewGuid().ToString("D"),
                 Value = $"SomeValueWithPolishLetters ł ą ę ó ź ż ć ś - {Guid.NewGuid():D}",
-                AzureTableId = Guid.NewGuid()
+                AzureTableRowId = Guid.NewGuid()
             };
 
             var serialized = model.Serialize();
@@ -26,7 +26,7 @@
             {
                 Id = Guid.NewGuid().ToString("D"),
                 Value = $"SomeMockValueToTestUpsert ł ą ę ó ź ż ć ś -{Guid.NewGuid():D}",
-                AzureTableId = Guid.NewGuid()
+                AzureTableRowId = Guid.NewGuid()
             };
 
             var serialized = model.Serialize();

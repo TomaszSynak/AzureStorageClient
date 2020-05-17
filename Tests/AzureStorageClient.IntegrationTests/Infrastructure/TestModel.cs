@@ -17,7 +17,7 @@
 
         public string StorableId => string.IsNullOrWhiteSpace(AdditionalId) ? $"{Id}" : $"{AdditionalId}/{Id}";
 
-        public Guid AzureTableId { get; set; }
+        public Guid AzureTableRowId { get; set; }
 
         public bool IsDeleted { get; set; }
 

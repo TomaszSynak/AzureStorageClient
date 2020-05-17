@@ -3,9 +3,15 @@
 	<PropertyGroup>
 		<Authors>Tomasz Synak</Authors>
 		<Description>Client to Azure Table Storage</Description>
+		<PackageProjectUrl>https://github.com/TomaszSynak/AzureStorageClient</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/TomaszSynak/AzureStorageClient</RepositoryUrl>
+
+		<Copyright>MIT License</Copyright>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<RepositoryType>Git</RepositoryType>
 
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
-		<PackageId>AzureStorageClient.Blob</PackageId>
+		<PackageId>AzureStorageClient.Table</PackageId>
 		<Version>0.0.1</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageTags></PackageTags>
@@ -28,5 +34,12 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="System.Collections.Immutable" Version="1.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath></PackagePath>
+	  </None>
 	</ItemGroup>
 </Project>

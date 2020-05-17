@@ -1,11 +1,40 @@
 # AzureStorageClient
 
-Client to Azure Blob Storage
+1. Client to Azure Blob Storage
+2. Client to Azure Table Storage
 
 ---
-## Import
+## Prerequests
 
-- register *StorageClient* in IoC: `services.AddStorageClient(Configuration);`
+- .Net Core v 2.0 or above
+
+---
+## How to use
+
+#### 1. Blob Storage Client
+
+	
+   - register *AzureBlobClient* in IoC: `services.AddAzureBlobClient(Configuration);`
+   - add to `appsettings.json` section: 
+		```
+		"AzureBlobClientSettings": {
+			"ConnectionString": "",
+			"ContainerName": ""
+		},
+		```
+   - reference *IAzureBlobClient*
+   - inject through constructor *IAzureTableClient*
+
+#### 2. Table Storage Client
+
+   - register *AzureTableClient* in IoC: `services.AddAzureTableClient(Configuration);`
+   - add to `appsettings.json` section: 
+		```
+		"AzureTableClientSettings": {
+			"ConnectionString": ""
+		}
+		```
+	- inject through constructor *IAzureTableClient*
 
 ---
 ## Integration tests
