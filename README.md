@@ -34,7 +34,8 @@
 			"ConnectionString": ""
 		}
 		```
-	- inject through constructor *IAzureTableClient*
+   - inject through constructor *IAzureTableClient*
+
 
 ---
 ## Integration tests
