@@ -1,4 +1,4 @@
-﻿namespace AzureStorageClient
+namespace AzureStorageClient
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;

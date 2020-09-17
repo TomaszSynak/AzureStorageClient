@@ -12,29 +12,29 @@
 
         public AzureBlobManager() => _blobStorageClientSettings = ConfigurationProvider.GetBlobStorageClientSettings();
 
-        public async Task SetUp(CancellationToken cancellationToken = default) => await SetUpBlobStorage(cancellationToken);
+        public async Task SetUp(CancellationToken ct = default) => await SetUpBlobStorage(ct);
 
-        public async Task CleanUp(CancellationToken cancellationToken = default) => await CleanUpBlobStorage(cancellationToken);
+        public async Task CleanUp(CancellationToken ct = default) => await CleanUpBlobStorage(ct);
 
-        private async Task SetUpBlobStorage(CancellationToken cancellationToken = default)
+        private async Task SetUpBlobStorage(CancellationToken ct = default)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var blobContainerClient = new BlobContainerClient(_blobStorageClientSettings.ConnectionString, _blobStorageClientSettings.ContainerName);
 
-            var doesNotExist = await blobContainerClient.DoesNotExistAsync(cancellationToken: cancellationToken);
+            var doesNotExist = await blobContainerClient.DoesNotExistAsync(cancellationToken: ct);
             if (doesNotExist)
             {
-                await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+                await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: ct);
             }
         }
 
-        private async Task CleanUpBlobStorage(CancellationToken cancellationToken = default)
+        private async Task CleanUpBlobStorage(CancellationToken ct = default)
         {
             var blobContainerClient = new BlobContainerClient(_blobStorageClientSettings.ConnectionString, _blobStorageClientSettings.ContainerName);
-            var containerExists = (await blobContainerClient.ExistsAsync(cancellationToken)).Value;
+            var containerExists = (await blobContainerClient.ExistsAsync(ct)).Value;
             if (containerExists)
             {
-                await blobContainerClient.DeleteAsync(cancellationToken: cancellationToken);
+                await blobContainerClient.DeleteAsync(cancellationToken: ct);
             }
 
             // It takes ~40 sec for container in Azure to be deleted
