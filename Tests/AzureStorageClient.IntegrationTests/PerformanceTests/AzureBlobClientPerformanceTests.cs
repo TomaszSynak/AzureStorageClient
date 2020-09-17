@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Threading;
     using System.Threading.Tasks;
     using Infrastructure;
     using Xunit;
@@ -46,11 +45,7 @@
             var expectedReadModel = ReadModelFactory.Create();
 
             // Act
-            var stopwatch = Stopwatch.StartNew();
-
-            stopwatch.Restart();
-            var blob = await _azureBlobClient.GetAsync<ReadModel>(expectedReadModel.StorableId);
-            stopwatch.Stop();
+            var (blob, executionTime) = await GetBlob(expectedReadModel.StorableId);
 
             // Assert
             Assert.NotNull(blob);
@@ -77,38 +72,49 @@
             Assert.Equal(expectedReadModel.SectionName10, blob.SectionName10);
             Assert.Equal(expectedReadModel.SectionContent10, blob.SectionContent10);
 
-            _testOutputHelper.WriteLine($"SingleUser read time {stopwatch.Elapsed.TotalMilliseconds} ms");
+            _testOutputHelper.WriteLine($"SingleUser read time {executionTime.TotalMilliseconds} ms");
         }
 
         [Fact]
         public async Task GetAsync_MultipleUsers()
         {
-            // Act
-            const int numberOfConcurrentUser = 100;
-            var stopwatch = Stopwatch.StartNew();
-
             // Arrange
+            const int numberOfConcurrentUser = 10;
             var expectedReadModel = ReadModelFactory.Create();
-            var taskList = new List<Task<ReadModel>>();
+            var taskList = new List<Task<(ReadModel, TimeSpan)>>();
 
-            stopwatch.Restart();
-
+            // Act
             for (int i = 0; i < numberOfConcurrentUser; i++)
             {
-                taskList.Add(_azureBlobClient.GetAsync<ReadModel>(expectedReadModel.StorableId));
+                taskList.Add(GetBlob(expectedReadModel.StorableId));
             }
 
             var results = await Task.WhenAll(taskList);
 
-            stopwatch.Stop();
-
             // Assert
-            foreach (var result in results)
+            var totalExecutionTime = TimeSpan.Zero;
+
+            foreach (var (readModel, executionTime) in results)
             {
-                Assert.NotNull(result);
+                Assert.NotNull(readModel);
+                totalExecutionTime = totalExecutionTime.Add(executionTime);
             }
 
-            _testOutputHelper.WriteLine($"MultipleUsers read time {stopwatch.Elapsed.TotalMilliseconds} ms for {numberOfConcurrentUser} users");
+            var averageMilliseconds = totalExecutionTime.TotalMilliseconds / numberOfConcurrentUser;
+
+            _testOutputHelper.WriteLine($"MultipleUsers read time {averageMilliseconds} ms for {numberOfConcurrentUser} users");
+        }
+
+        private async Task<(ReadModel model, TimeSpan executionTime)> GetBlob(string storableId)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            stopwatch.Restart();
+
+            var readModel = await _azureBlobClient.GetAsync<ReadModel>(storableId);
+
+            stopwatch.Stop();
+
+            return (readModel, stopwatch.Elapsed);
         }
     }
 }
