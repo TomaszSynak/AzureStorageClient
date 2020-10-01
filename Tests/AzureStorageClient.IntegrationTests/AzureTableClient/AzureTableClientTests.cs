@@ -1,5 +1,6 @@
 ﻿namespace AzureStorageClient.IntegrationTests.AzureTableClient
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Infrastructure;
@@ -69,7 +70,7 @@
 
             // Act
             var storableEntityList = await _azureTableClient.GetListAsync<TestModel>();
-            var newlyCreatedStorableEntity = storableEntityList.SingleOrDefault(se => se.Id.Equals(testModel.Id));
+            var newlyCreatedStorableEntity = storableEntityList.SingleOrDefault(se => se.Id.Equals(testModel.Id, StringComparison.InvariantCultureIgnoreCase));
 
             // Assert
             Assert.NotEmpty(storableEntityList);

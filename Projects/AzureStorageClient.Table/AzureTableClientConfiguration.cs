@@ -16,7 +16,7 @@ namespace AzureStorageClient
             // Enable TLS 1.2 before connecting to Azure Storage
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var configurationSection = configuration.GetSection(SettingsSection)
+            var configurationSection = configuration?.GetSection(SettingsSection)
                      ?? throw new ArgumentNullException($"{SettingsSection} is missing from configuration.");
 
             serviceCollection
