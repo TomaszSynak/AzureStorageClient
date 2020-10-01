@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{801744BC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageClient.IntegrationTests", "Tests\AzureStorageClient.IntegrationTests\AzureStorageClient.IntegrationTests.csproj", "{50AB3DB8-BF32-4628-AC97-3B8A048DD859}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".slnResources", ".slnResources", "{2BF79F63-67BA-4763-B1EB-565FD266E462}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BF79F63-67BA-4763-B1EB-565FD266E462}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		AzureStorageClient.ruleset = AzureStorageClient.ruleset

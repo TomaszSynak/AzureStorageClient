@@ -11,19 +11,19 @@
         Task UpsertAsync<TStorable>(TStorable objectToUpsert, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable, new();
 
-        Task<TStorable> GetAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
+        Task<TStorable> GetAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable, new();
 
         Task<ImmutableList<TStorable>> GetListAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable, new();
 
-        Task SoftDeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
+        Task SoftDeleteAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable, new();
 
-        Task RevertSoftDeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
+        Task RevertSoftDeleteAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable, new();
 
-        Task DeleteAsync<TStorable>(string storableId, CancellationToken cancellationToken = default)
+        Task DeleteAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable, new();
     }
 }

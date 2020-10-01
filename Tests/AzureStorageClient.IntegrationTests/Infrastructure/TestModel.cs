@@ -15,7 +15,7 @@
 
         public string Value { get; set; }
 
-        public string StorableId => string.IsNullOrWhiteSpace(AdditionalId) ? $"{Id}" : $"{AdditionalId}/{Id}";
+        public string BlobPath => string.IsNullOrWhiteSpace(AdditionalId) ? $"{Id}" : $"{AdditionalId}/{Id}";
 
         public Guid AzureTableRowId { get; set; }
 
