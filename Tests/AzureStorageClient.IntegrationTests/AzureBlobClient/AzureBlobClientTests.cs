@@ -25,7 +25,7 @@
             await _azureBlobClient.UpsertAsync(testModel);
 
             // Assert
-            var blob = await _azureBlobClient.GetAsync<TestModel>(testModel.StorableId);
+            var blob = await _azureBlobClient.GetAsync<TestModel>(testModel.BlobPath);
             Assert.NotNull(blob);
         }
 
@@ -37,7 +37,7 @@
             await _azureBlobClient.UpsertAsync(testModel);
 
             // Act
-            var blobContent = await _azureBlobClient.GetAsync<TestModel>(testModel.StorableId);
+            var blobContent = await _azureBlobClient.GetAsync<TestModel>(testModel.BlobPath);
 
             // Assert
             Assert.NotNull(blobContent);
@@ -54,7 +54,7 @@
 
             // Act
             var blobContentList = await _azureBlobClient.GetListAsync<TestModel>();
-            var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id));
+            var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id, StringComparison.InvariantCultureIgnoreCase));
 
             // Assert
             Assert.NotEmpty(blobContentList);
@@ -74,7 +74,7 @@
 
             // Act
             var blobContentList = await _azureBlobClient.GetListAsync<TestModel>(prefix: testModel.AdditionalId);
-            var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id));
+            var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id, StringComparison.InvariantCultureIgnoreCase));
 
             // Assert
             Assert.NotEmpty(blobContentList);
@@ -92,13 +92,13 @@
             await _azureBlobClient.UpsertAsync(testModel);
 
             // Act
-            await _azureBlobClient.DeleteAsync<TestModel>(testModel.StorableId);
+            await _azureBlobClient.DeleteAsync<TestModel>(testModel.BlobPath);
 
             // Assert
-            async Task CheckIfExists() => await _azureBlobClient.GetAsync<TestModel>(testModel.StorableId);
+            async Task CheckIfExists() => await _azureBlobClient.GetAsync<TestModel>(testModel.BlobPath);
             var exception = await Record.ExceptionAsync(CheckIfExists);
             Assert.IsType<Exception>(exception);
-            Assert.StartsWith($"Failed to GET blob {testModel.StorableId}.", exception.Message);
+            Assert.StartsWith($"Failed to GET blob {testModel.BlobPath}.", exception.Message, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
