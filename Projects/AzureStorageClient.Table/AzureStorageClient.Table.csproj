@@ -25,6 +25,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="AzureStorageClient.Table.csproj.DotSettings" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
 		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
 			<PrivateAssets>all</PrivateAssets>

@@ -7,7 +7,7 @@ namespace AzureStorageClient
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
-    public static class AzureTableClientConfiguration
+    public static class Installer
     {
         private const string SettingsSection = nameof(AzureTableClientSettings);
 
