@@ -23,7 +23,7 @@
 
         public string Serialize()
         {
-            return JsonSerializer.Serialize(this);
+            return Serializer.Serialize(this);
         }
 
         public byte[] Convert()

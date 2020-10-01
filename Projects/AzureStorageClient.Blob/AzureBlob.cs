@@ -99,7 +99,7 @@
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Verify blob integrity - not security usage")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Verify blob integrity")]
         public void CheckBlobIntegrity(BlobProperties blobProperties, byte[] blobByteContent)
         {
             byte[] blobMd5Hash = null;

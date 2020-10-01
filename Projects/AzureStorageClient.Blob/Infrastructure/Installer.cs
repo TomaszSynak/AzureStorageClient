@@ -8,7 +8,7 @@ namespace AzureStorageClient
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
-    public static class AzureBlobClientConfiguration
+    public static class Installer
     {
         private const string SettingsSection = nameof(AzureBlobClientSettings);
 
@@ -19,8 +19,8 @@ namespace AzureStorageClient
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var configurationSection = configuration.GetSection(SettingsSection)
-                     ?? throw new ArgumentNullException($"{SettingsSection} is missing from configuration.");
+            var configurationSection = configuration?.GetSection(SettingsSection)
+                ?? throw new ArgumentNullException($"{SettingsSection} is missing from configuration.");
 
             serviceCollection
                 .Configure<AzureBlobClientSettings>(configurationSection);
