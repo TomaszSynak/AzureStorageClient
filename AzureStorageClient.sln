@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageClient.Table", "Projects\AzureStorageClient.Table\AzureStorageClient.Table.csproj", "{D6564434-595B-4C10-B292-67471B7A236F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageClient.MultiContainerClient", "Solution Items\AzureStorageClient.MultiContainerClient\AzureStorageClient.MultiContainerClient.csproj", "{72E05A40-E93C-4E8A-94E5-F7AD21AF340B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -39,6 +41,9 @@ Global
 		{D6564434-595B-4C10-B292-67471B7A236F}.Debug|x64.Build.0 = Debug|x64
 		{D6564434-595B-4C10-B292-67471B7A236F}.Release|x64.ActiveCfg = Release|x64
 		{D6564434-595B-4C10-B292-67471B7A236F}.Release|x64.Build.0 = Release|x64
+		{72E05A40-E93C-4E8A-94E5-F7AD21AF340B}.Debug|x64.ActiveCfg = Debug|x64
+		{72E05A40-E93C-4E8A-94E5-F7AD21AF340B}.Release|x64.ActiveCfg = Release|x64
+		{72E05A40-E93C-4E8A-94E5-F7AD21AF340B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,6 +52,7 @@ Global
 		{3B38928B-9B41-4808-B727-65D818583ED3} = {04AA9A55-9AE9-4388-82DC-93F2C6CF8E12}
 		{50AB3DB8-BF32-4628-AC97-3B8A048DD859} = {801744BC-B403-4E9E-93AA-E0B32D8B0447}
 		{D6564434-595B-4C10-B292-67471B7A236F} = {04AA9A55-9AE9-4388-82DC-93F2C6CF8E12}
+		{72E05A40-E93C-4E8A-94E5-F7AD21AF340B} = {2BF79F63-67BA-4763-B1EB-565FD266E462}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9CDA2F1B-7B6A-4F50-BB2B-9F5D8DBFD24C}
