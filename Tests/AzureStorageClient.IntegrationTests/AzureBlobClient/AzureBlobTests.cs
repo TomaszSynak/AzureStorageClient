@@ -101,7 +101,7 @@
             var exception = await Record.ExceptionAsync(MethodUnderTest);
 
             // Assert
-            Assert.IsType<Exception>(exception);
+            Assert.IsType<BlobNotFoundException>(exception);
         }
 
         [Fact]
@@ -120,7 +120,7 @@
             var exception = await Record.ExceptionAsync(MethodUnderTest);
 
             // Assert
-            Assert.IsType<Exception>(exception);
+            Assert.IsType<BlobDeletedException>(exception);
 
             var blobProperties = (await _blobClient.GetPropertiesAsync()).Value;
             blobStorageMetadata = new AzureBlobMetadata(blobProperties.Metadata);
