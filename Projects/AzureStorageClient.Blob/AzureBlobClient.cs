@@ -22,7 +22,7 @@
             => await _azureBlobContainer.IsAccessible(cancellationToken);
 
         public async Task UpsertAsync<TStorable>(TStorable objectToUpsert, CancellationToken cancellationToken = default)
-            where TStorable : class, IBlobStorable, new()
+            where TStorable : class, IBlobStorable
         {
             try
             {
@@ -39,7 +39,7 @@
         }
 
         public async Task<TStorable> GetAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
-            where TStorable : class, IBlobStorable, new()
+            where TStorable : class, IBlobStorable
         {
             try
             {
@@ -56,7 +56,7 @@
         }
 
         public async Task<ImmutableList<TStorable>> GetListAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
-            where TStorable : class, IBlobStorable, new()
+            where TStorable : class, IBlobStorable
         {
             // ToDo: add performance tests
             // ToDo: let prefix be marked with attribute instead of passing it as parameter
@@ -79,7 +79,7 @@
         }
 
         public async Task SoftDeleteAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
-            where TStorable : class, IBlobStorable, new()
+            where TStorable : class, IBlobStorable
         {
             try
             {
@@ -93,7 +93,7 @@
         }
 
         public async Task RevertSoftDeleteAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
-            where TStorable : class, IBlobStorable, new()
+            where TStorable : class, IBlobStorable
         {
             try
             {
@@ -107,7 +107,7 @@
         }
 
         public async Task DeleteAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
-            where TStorable : class, IBlobStorable, new()
+            where TStorable : class, IBlobStorable
         {
             // ToDo: make sure that blobPath is the one from TStorable, as user intended
             try
@@ -128,7 +128,7 @@
                 : $"{typeof(TStorable).Name}/{blobPath}";
 
         private async Task<AzureBlob> GetAzureBlob<TStorable>(string blobPath, CancellationToken cancellationToken = default)
-            where TStorable : class, IBlobStorable, new()
+            where TStorable : class, IBlobStorable
         {
             return await _azureBlobContainer.GetAzureBlob(GetOrAddBlobIdPrefix<TStorable>(blobPath), cancellationToken);
         }
