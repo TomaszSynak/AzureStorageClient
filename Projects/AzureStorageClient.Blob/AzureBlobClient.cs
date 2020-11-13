@@ -64,7 +64,7 @@
             // ToDo: what if list would be empty?
             try
             {
-                var azureBlobList = await _azureBlobContainer.GetAzureBlobList(GetOrAddBlobIdPrefix<TStorable>(prefix), cancellationToken);
+                var azureBlobList = await _azureBlobContainer.GetAzureBlobList(GetOrAddBlobPathPrefix<TStorable>(prefix), cancellationToken);
 
                 var downloadingAzureBlobStringContent = azureBlobList.Select(ab => ab.Download(cancellationToken)).ToList();
 
@@ -122,7 +122,20 @@
             }
         }
 
-        private static string GetOrAddBlobIdPrefix<TStorable>(string blobPath = null)
+        public async Task DeleteFolderAsync<TStorable>(string blobPath = null, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
+        {
+            try
+            {
+                await _azureBlobContainer.DeleteAzureBlobFolder(GetOrAddBlobPathPrefix<TStorable>(blobPath), cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                throw new BlobClientException($"Failed to DELETE folder {blobPath}. ", exception);
+            }
+        }
+
+        private static string GetOrAddBlobPathPrefix<TStorable>(string blobPath = null)
             => string.IsNullOrWhiteSpace(blobPath)
                 ? $"{typeof(TStorable).Name}"
                 : $"{typeof(TStorable).Name}/{blobPath}";
@@ -130,7 +143,7 @@
         private async Task<AzureBlob> GetAzureBlob<TStorable>(string blobPath, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable
         {
-            return await _azureBlobContainer.GetAzureBlob(GetOrAddBlobIdPrefix<TStorable>(blobPath), cancellationToken);
+            return await _azureBlobContainer.GetAzureBlob(GetOrAddBlobPathPrefix<TStorable>(blobPath), cancellationToken);
         }
     }
 }

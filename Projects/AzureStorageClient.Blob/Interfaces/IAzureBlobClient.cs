@@ -25,5 +25,8 @@
 
         Task DeleteAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable;
+
+        Task DeleteFolderAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable;
     }
 }
