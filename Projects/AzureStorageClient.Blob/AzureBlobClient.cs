@@ -34,7 +34,7 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to UPSERT blob {objectToUpsert.BlobPath}. ", exception);
+                throw new BlobClientException($"Failed to UPSERT blob {objectToUpsert.BlobPath}. ", exception);
             }
         }
 
@@ -51,7 +51,7 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to GET blob {blobPath}. ", exception);
+                throw new BlobClientException($"Failed to GET blob {blobPath}. ", exception);
             }
         }
 
@@ -74,7 +74,7 @@
             }
             catch (Exception exception)
             {
-                throw new Exception("Failed to GET blob list. ", exception);
+                throw new BlobClientException("Failed to GET blob list. ", exception);
             }
         }
 
@@ -88,7 +88,7 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to CheckAsDeleted blob {blobPath}. ", exception);
+                throw new BlobClientException($"Failed to CheckAsDeleted blob {blobPath}. ", exception);
             }
         }
 
@@ -102,7 +102,7 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to UncheckAsDeleted blob {blobPath}. ", exception);
+                throw new BlobClientException($"Failed to UncheckAsDeleted blob {blobPath}. ", exception);
             }
         }
 
@@ -118,7 +118,7 @@
             }
             catch (Exception exception)
             {
-                throw new Exception($"Failed to DELETE blob {blobPath}. ", exception);
+                throw new BlobClientException($"Failed to DELETE blob {blobPath}. ", exception);
             }
         }
 

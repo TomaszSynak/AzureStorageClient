@@ -1,6 +1,5 @@
 ﻿namespace AzureStorageClient
 {
-    using System;
     using System.IO;
     using System.Security.Cryptography;
     using System.Threading;
@@ -59,7 +58,7 @@
                 return;
             }
 
-            throw new Exception($"Blob {_blobClient.Name} does not exists.");
+            throw BlobNotFoundException.Create(_blobClient.Name);
         }
 
         public async Task<string> Download(CancellationToken cancellationToken = default)
@@ -85,10 +84,10 @@
                     }
                 }
 
-                throw new Exception($"Blob {_blobClient.Name} is deleted.");
+                throw BlobDeletedException.Create(_blobClient.Name);
             }
 
-            throw new Exception($"Blob {_blobClient.Name} does not exists.");
+            throw BlobNotFoundException.Create(_blobClient.Name);
         }
 
         public async Task Delete(DeleteSnapshotsOption? deleteSnapshotsOption = null, CancellationToken cancellationToken = default)
@@ -115,7 +114,7 @@
                     continue;
                 }
 
-                throw new Exception($"Blob {_blobClient.Name}'s content integrity is corrupted - MD5 mismatch.");
+                throw BlobContentCorruptedException.Create(_blobClient.Name);
             }
         }
 
