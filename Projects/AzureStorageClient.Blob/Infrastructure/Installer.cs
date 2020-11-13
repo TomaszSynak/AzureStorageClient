@@ -12,14 +12,14 @@ namespace AzureStorageClient
     {
         private const string SettingsSection = nameof(AzureBlobClientSettings);
 
-        public static void AddAzureBlobClient(this IServiceCollection serviceCollection, IConfiguration configuration)
+        public static void AddAzureBlobClient(this IServiceCollection serviceCollection, IConfiguration configuration, string settingsSection = null)
         {
             // Enable TLS 1.2 before connecting to Azure Storage
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var configurationSection = configuration?.GetSection(SettingsSection)
+            var configurationSection = configuration?.GetSection(settingsSection ?? SettingsSection)
                 ?? throw new ArgumentNullException($"{SettingsSection} is missing from configuration.");
 
             serviceCollection
