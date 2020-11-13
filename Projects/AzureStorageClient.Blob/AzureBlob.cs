@@ -1,6 +1,5 @@
 ﻿namespace AzureStorageClient
 {
-    using System;
     using System.IO;
     using System.Security.Cryptography;
     using System.Threading;
@@ -59,7 +58,7 @@
                 return;
             }
 
-            throw new Exception($"Blob {_blobClient.Name} does not exists.");
+            throw BlobNotFoundException.Create(_blobClient.Name);
         }
 
         public async Task<string> Download(CancellationToken cancellationToken = default)
@@ -85,10 +84,10 @@
                     }
                 }
 
-                throw new Exception($"Blob {_blobClient.Name} is deleted.");
+                throw BlobDeletedException.Create(_blobClient.Name);
             }
 
-            throw new Exception($"Blob {_blobClient.Name} does not exists.");
+            throw BlobNotFoundException.Create(_blobClient.Name);
         }
 
         public async Task Delete(DeleteSnapshotsOption? deleteSnapshotsOption = null, CancellationToken cancellationToken = default)
@@ -99,9 +98,15 @@
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Verify blob integrity")]
         public void CheckBlobIntegrity(BlobProperties blobProperties, byte[] blobByteContent)
         {
-            var blobMd5Hash = MD5.Create().ComputeHash(blobByteContent);
+            byte[] blobMd5Hash = null;
+            using (var md5 = MD5.Create())
+            {
+                blobMd5Hash = md5.ComputeHash(blobByteContent);
+            }
+
             for (int i = 0; i < blobMd5Hash.Length; i++)
             {
                 if (blobProperties.ContentHash[i].Equals(blobMd5Hash[i]))
@@ -109,7 +114,7 @@
                     continue;
                 }
 
-                throw new Exception($"Blob {_blobClient.Name}'s content integrity is corrupted - MD5 mismatch.");
+                throw BlobContentCorruptedException.Create(_blobClient.Name);
             }
         }
 

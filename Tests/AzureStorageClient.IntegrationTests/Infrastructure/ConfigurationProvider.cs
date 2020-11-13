@@ -24,11 +24,11 @@
 
         private static IConfigurationRoot GetConfigurationRoot()
         {
-            return _configurationRoot ?? (_configurationRoot = new ConfigurationBuilder()
+            return _configurationRoot ??= new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile("appsettings.Development.json", true, true)
-                .Build());
+                .Build();
         }
     }
 }

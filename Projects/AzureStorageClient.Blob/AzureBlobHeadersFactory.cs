@@ -5,9 +5,14 @@
 
     internal class AzureBlobHeadersFactory
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Verify blob integrity")]
         public static BlobHttpHeaders Create(byte[] blobStringContent)
         {
-            var blobMd5Hash = MD5.Create().ComputeHash(blobStringContent);
+            byte[] blobMd5Hash = null;
+            using (var md5 = MD5.Create())
+            {
+                blobMd5Hash = md5.ComputeHash(blobStringContent);
+            }
 
             return new BlobHttpHeaders
             {

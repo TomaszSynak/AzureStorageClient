@@ -50,9 +50,10 @@
 
             var azureTable = new AzureTable<TStorable>(cloudTable);
 
-            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-
-            azureTable.Initialize(cancellationTokenSource.Token).GetAwaiter().GetResult();
+            using (var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30)))
+            {
+                azureTable.Initialize(cancellationTokenSource.Token).GetAwaiter().GetResult();
+            }
 
             return azureTable;
         }
