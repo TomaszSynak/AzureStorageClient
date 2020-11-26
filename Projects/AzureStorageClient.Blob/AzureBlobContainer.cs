@@ -14,26 +14,39 @@
     {
         private readonly BlobContainerClient _blobContainerClient;
 
+        private bool _containerExists;
+
         public AzureBlobContainer(IOptions<AzureBlobClientSettings> options)
-            => _blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
+        {
+            _blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
+            _containerExists = false;
+        }
 
         public async Task<bool> IsAccessible(CancellationToken cancellationToken = default)
             => await _blobContainerClient.IsAccessibleAsync(cancellationToken);
 
         public void Initialize()
         {
-            if (_blobContainerClient.DoesNotExist())
+            if (_containerExists || _blobContainerClient.Exists())
             {
-                _blobContainerClient.CreateIfNotExists();
+                _containerExists = true;
+                return;
             }
+
+            _blobContainerClient.CreateIfNotExists();
+            _containerExists = true;
         }
 
         public async Task Initialize(CancellationToken cancellationToken)
         {
-            if (await _blobContainerClient.DoesNotExistAsync(cancellationToken))
+            if (_containerExists || await _blobContainerClient.ExistsAsync(cancellationToken))
             {
-                await _blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+                _containerExists = true;
+                return;
             }
+
+            await _blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+            _containerExists = true;
         }
 
         public async Task<AzureBlob> GetAzureBlob(string blobId, CancellationToken cancellationToken = default)
