@@ -5,18 +5,13 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Options;
 
     internal class AzureBlobClient : IAzureBlobClient
     {
         // ToDo: add performance tests
         private readonly AzureBlobContainer _azureBlobContainer;
 
-        public AzureBlobClient(IOptions<AzureBlobClientSettings> options)
-        {
-            // ToDo: verify that settings are neither null nor empty
-            _azureBlobContainer = AzureBlobContainerFactory.Create(options);
-        }
+        public AzureBlobClient(AzureBlobContainer azureBlobContainer) => _azureBlobContainer = azureBlobContainer;
 
         public async Task<bool> IsAccessible(CancellationToken cancellationToken = default)
             => await _azureBlobContainer.IsAccessible(cancellationToken);

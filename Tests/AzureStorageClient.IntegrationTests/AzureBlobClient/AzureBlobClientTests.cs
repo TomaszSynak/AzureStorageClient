@@ -13,7 +13,7 @@
     {
         private readonly AzureBlobClient _azureBlobClient;
 
-        public AzureBlobClientTests() => _azureBlobClient = new AzureBlobClient(OptionsFactory.CreateBlobSettings());
+        public AzureBlobClientTests() => _azureBlobClient = new AzureBlobClient(new AzureBlobContainer(OptionsFactory.CreateBlobSettings()));
 
         [Fact]
         public async Task UpsertAsync_ObjectUpsertCorrectly()

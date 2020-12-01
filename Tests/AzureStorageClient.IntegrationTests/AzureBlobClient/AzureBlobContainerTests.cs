@@ -1,9 +1,11 @@
 ﻿namespace AzureStorageClient.IntegrationTests.AzureBlobClient
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Azure.Storage.Blobs;
     using Infrastructure;
+    using Microsoft.Extensions.Options;
     using Xunit;
 
     [Collection(nameof(IntegrationTests))]
@@ -32,7 +34,7 @@
             Assert.True(containerExists);
 
             // Clean up
-            await blobContainerClient.DeleteAsync();
+            await CleanUp(options);
         }
 
         [Fact]
@@ -40,7 +42,7 @@
         public async Task GetBlobStorage_ContainerExists_ContainerCreated()
         {
             // Arrange
-            var options = OptionsFactory.CreateBlobSettings();
+            var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
             var blobStorageContainer = new AzureBlobContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
@@ -50,31 +52,32 @@
             // Assert
             var containerExists = (await blobContainerClient.ExistsAsync()).Value;
             Assert.True(containerExists);
+
+            // Clean up
+            await CleanUp(options);
         }
 
         [Fact]
-        public async Task GetBlobStorageList_ContainerExists_GetContainerContent()
+        public async Task GetBlobStorageList_LargeFolder_BlobsFetchedInBatches()
         {
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
             var blobStorageContainer = new AzureBlobContainer(options);
-            var blobStorage = await blobStorageContainer.GetAzureBlob(Guid.NewGuid().ToString("D"));
-            await blobStorage.Upload("Some mock blob content");
+            for (int i = 0; i < 100; i++)
+            {
+                var blobStorage = await blobStorageContainer.GetAzureBlob($"LargeFolder/Blob-{i}");
+                await blobStorage.Upload($"Blob-{i} - some mock blob content");
+            }
 
             // Act
-            var blobStorageList = await blobStorageContainer.GetAzureBlobList();
+            var blobStorageList = await blobStorageContainer.GetAzureBlobList("LargeFolder");
 
             // Assert
             Assert.NotEmpty(blobStorageList);
-            Assert.Single(blobStorageList);
+            Assert.Equal(100, blobStorageList.Count);
 
             // Clean up
-            var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
-            var containerExists = (await blobContainerClient.ExistsAsync()).Value;
-            if (containerExists)
-            {
-                await blobContainerClient.DeleteAsync();
-            }
+            await CleanUp(options);
         }
 
         [Fact]
@@ -101,11 +104,39 @@
             Assert.Empty(blobStorageList);
 
             // Clean up
+            await CleanUp(options);
+        }
+
+        [Fact]
+        public async Task DeleteAzureBlobFolder_LargeFolder_BlobsDeletedInBatches()
+        {
+            // Arrange
+            var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
+            var blobStorageContainer = new AzureBlobContainer(options);
+            for (int i = 0; i < 100; i++)
+            {
+                var blobStorage = await blobStorageContainer.GetAzureBlob($"LargeFolder/Blob-{i}");
+                await blobStorage.Upload($"Blob-{i} - some mock blob content");
+            }
+
+            // Act
+            await blobStorageContainer.DeleteAzureBlobFolder("LargeFolder");
+
+            // Assert
+            var blobStorageList = await blobStorageContainer.GetAzureBlobList("LargeFolder");
+            Assert.Empty(blobStorageList);
+
+            // Clean up
+            await CleanUp(options);
+        }
+
+        private static async Task CleanUp(IOptions<AzureBlobClientSettings> options, CancellationToken cancellationToken = default)
+        {
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
-            var containerExists = (await blobContainerClient.ExistsAsync()).Value;
+            var containerExists = (await blobContainerClient.ExistsAsync(cancellationToken)).Value;
             if (containerExists)
             {
-                await blobContainerClient.DeleteAsync();
+                await blobContainerClient.DeleteAsync(cancellationToken: cancellationToken);
             }
         }
     }
