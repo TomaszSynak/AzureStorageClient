@@ -64,16 +64,25 @@
             return blobIdList.Select(CreateAzureBlob).ToImmutableList();
         }
 
-        public async Task<ImmutableList<AzureBlob>> GetAzureBlobFolder(string prefix = null, CancellationToken cancellationToken = default)
+        public async Task<ImmutableList<TStorable>> GetAzureBlobFolder<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
         {
             await Initialize(cancellationToken);
 
-            ImmutableList<AzureBlob> GetBlobs(IReadOnlyList<BlobItem> blobItemList)
+            async Task<IReadOnlyList<TStorable>> GetBlobs(IReadOnlyList<BlobItem> blobItemList, CancellationToken ct = default)
             {
-                return blobItemList.Where(bi => bi.IsBlobNotDeleted()).Select(bi => CreateAzureBlob(bi.Name)).ToImmutableList();
+                var downloadingAzureBlobs = blobItemList
+                    .Where(bi => bi.IsBlobNotDeleted())
+                    .Select(bi => CreateAzureBlob(bi.Name))
+                    .Select(ab => ab.Download<TStorable>(ct))
+                    .ToList();
+
+                await Task.WhenAll(downloadingAzureBlobs);
+
+                return downloadingAzureBlobs.Select(d => d.Result).ToList();
             }
 
-            return FetchBlobs(GetBlobs, prefix, cancellationToken);
+            return await ActionOnBlobs(GetBlobs, prefix, cancellationToken);
         }
 
         public async Task DeleteAzureBlobFolder(string prefix = null, CancellationToken cancellationToken = default)
@@ -87,7 +96,7 @@
                 await Task.WhenAll(deletingAzureBlobs);
             }
 
-            await FetchBlobs(DeleteBlobs, prefix, cancellationToken);
+            await ActionOnBlobs(DeleteBlobs, prefix, cancellationToken);
         }
 
         private AzureBlob CreateAzureBlob(string blobId)
@@ -95,7 +104,7 @@
             return new AzureBlob(_blobContainerClient.GetBlobClient(blobId));
         }
 
-        private async Task FetchBlobs(Func<IReadOnlyList<BlobItem>, CancellationToken, Task> actionToPerform, string prefix = null, CancellationToken cancellationToken = default)
+        private async Task ActionOnBlobs(Func<IReadOnlyList<BlobItem>, CancellationToken, Task> actionToPerform, string prefix = null, CancellationToken cancellationToken = default)
         {
             // Azure Blob storage does not have a concept of folders and everything inside the container is considered a blob including the folders.
             // https://stackoverflow.com/a/34737858/5808148
@@ -106,7 +115,7 @@
                 {
                     var blobPageSegment = _blobContainerClient
                         .GetBlobs(BlobTraits.Metadata, BlobStates.None, prefix, cancellationToken)
-                        .AsPages(continuationToken, pageSizeHint: 20);
+                        .AsPages(continuationToken, pageSizeHint: 50);
 
                     foreach (var blobPage in blobPageSegment)
                     {
@@ -122,7 +131,7 @@
             }
         }
 
-        private ImmutableList<T> FetchBlobs<T>(Func<IReadOnlyList<BlobItem>, ImmutableList<T>> actionToPerform, string prefix = null, CancellationToken cancellationToken = default)
+        private async Task<ImmutableList<T>> ActionOnBlobs<T>(Func<IReadOnlyList<BlobItem>, CancellationToken, Task<IReadOnlyList<T>>> actionToPerform, string prefix = null, CancellationToken cancellationToken = default)
         {
             // Azure Blob storage does not have a concept of folders and everything inside the container is considered a blob including the folders.
             // https://stackoverflow.com/a/34737858/5808148
@@ -138,7 +147,8 @@
 
                     foreach (var blobPage in blobPageSegment)
                     {
-                        blobItemList.AddRange(actionToPerform.Invoke(blobPage.Values));
+                        var pageResults = await actionToPerform.Invoke(blobPage.Values, cancellationToken);
+                        blobItemList.AddRange(pageResults);
                         continuationToken = blobPage.ContinuationToken;
                     }
                 }

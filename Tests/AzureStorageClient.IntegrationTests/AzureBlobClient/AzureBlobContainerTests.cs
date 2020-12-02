@@ -70,7 +70,7 @@
             }
 
             // Act
-            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder("LargeFolder");
+            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder<TestModel>("LargeFolder");
 
             // Assert
             Assert.NotEmpty(blobStorageList);
@@ -98,7 +98,7 @@
             await blobClient.SetMetadataAsync(blobStorageMetadata.Metadata);
 
             // Act
-            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder();
+            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder<TestModel>();
 
             // Assert
             Assert.Empty(blobStorageList);
@@ -123,7 +123,7 @@
             await blobStorageContainer.DeleteAzureBlobFolder("LargeFolder");
 
             // Assert
-            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder("LargeFolder");
+            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder<TestModel>("LargeFolder");
             Assert.Empty(blobStorageList);
 
             // Clean up
