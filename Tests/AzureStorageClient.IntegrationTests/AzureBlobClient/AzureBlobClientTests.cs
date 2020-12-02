@@ -1,6 +1,7 @@
 ﻿namespace AzureStorageClient.IntegrationTests.AzureBlobClient
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Infrastructure;
@@ -30,6 +31,25 @@
         }
 
         [Fact]
+        public async Task UpsertAsync_BulkUpsert_ListUpsertCorrectly()
+        {
+            // Arrange
+            var listToUpsert = new List<TestModel>();
+            for (int i = 0; i < 100; i++)
+            {
+                listToUpsert.Add(TestModelFactory.Create().testModel);
+            }
+
+            // Act
+            await _azureBlobClient.UpsertAsync(listToUpsert);
+
+            // Assert
+            var uploadedBlobList = await _azureBlobClient.GetFolderContentAsync<TestModel>();
+            Assert.NotEmpty(uploadedBlobList);
+            Assert.Equal(listToUpsert.Count, uploadedBlobList.Count);
+        }
+
+        [Fact]
         public async Task GetAsync_ObjectRetrievedCorrectly()
         {
             // Arrange
@@ -53,7 +73,7 @@
             await _azureBlobClient.UpsertAsync(testModel);
 
             // Act
-            var blobContentList = await _azureBlobClient.GetListAsync<TestModel>();
+            var blobContentList = await _azureBlobClient.GetFolderContentAsync<TestModel>();
             var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id, StringComparison.InvariantCultureIgnoreCase));
 
             // Assert
@@ -73,7 +93,7 @@
             await _azureBlobClient.UpsertAsync(notListedModel);
 
             // Act
-            var blobContentList = await _azureBlobClient.GetListAsync<TestModel>(prefix: testModel.AdditionalId);
+            var blobContentList = await _azureBlobClient.GetFolderContentAsync<TestModel>(prefix: testModel.AdditionalId);
             var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id, StringComparison.InvariantCultureIgnoreCase));
 
             // Assert

@@ -28,11 +28,11 @@
         public async Task Upload_UploadHeadersCorrect()
         {
             // Arrange
-            var (_, serialized, converted) = TestModelFactory.Create();
+            var (testModel, _, converted) = TestModelFactory.Create();
             var blobHeaders = AzureBlobHeadersFactory.Create(converted);
 
             // Act
-            await _azureBlob.Upload(serialized);
+            await _azureBlob.Upload(testModel);
 
             // Assert
             var blobProperties = (await _blobClient.GetPropertiesAsync()).Value;
@@ -49,10 +49,10 @@
         public async Task Upload_BlobUploaded()
         {
             // Arrange
-            var (_, serialized, _) = TestModelFactory.Create();
+            var (testModel, _, _) = TestModelFactory.Create();
 
             // Act
-            await _azureBlob.Upload(serialized);
+            await _azureBlob.Upload(testModel);
 
             // Assert
             var blobExists = (await _blobClient.ExistsAsync()).Value;
@@ -63,10 +63,10 @@
         public async Task Upload_IdDeletedIsFalse()
         {
             // Arrange
-            var (_, serialized, _) = TestModelFactory.Create();
+            var (testModel, _, _) = TestModelFactory.Create();
 
             // Act
-            await _azureBlob.Upload(serialized);
+            await _azureBlob.Upload(testModel);
 
             // Assert
             var blobProperties = (await _blobClient.GetPropertiesAsync()).Value;
@@ -79,12 +79,11 @@
         public async Task Download_BlobExists_ContentDownloaded()
         {
             // Arrange
-            var (testModel, serialized, _) = TestModelFactory.Create();
-            await _azureBlob.Upload(serialized);
+            var (testModel, _, _) = TestModelFactory.Create();
+            await _azureBlob.Upload(testModel);
 
             // Act
-            var downloadedContent = await _azureBlob.Download();
-            var deserializedContent = downloadedContent.Deserialize<TestModel>();
+            var deserializedContent = await _azureBlob.Download<TestModel>();
 
             // Assert
             Assert.Equal(testModel.Id, deserializedContent.Id);
@@ -95,7 +94,7 @@
         public async Task Download_BlobDoesNotExist_ExceptionThrown()
         {
             // Arrange
-            async Task MethodUnderTest() => await _azureBlob.Download();
+            async Task MethodUnderTest() => await _azureBlob.Download<TestModel>();
 
             // Act
             var exception = await Record.ExceptionAsync(MethodUnderTest);
@@ -108,13 +107,13 @@
         public async Task Download_BlobExistsAndBlobIsDeleted_ExceptionThrown()
         {
             // Arrange
-            var (testModel, serialized, _) = TestModelFactory.Create();
-            await _azureBlob.Upload(serialized);
+            var (testModel, _, _) = TestModelFactory.Create();
+            await _azureBlob.Upload(testModel);
             var blobStorageMetadata = new AzureBlobMetadata();
             blobStorageMetadata.SetIsDeleted(true);
             await _blobClient.SetMetadataAsync(blobStorageMetadata.Metadata);
 
-            async Task MethodUnderTest() => await _azureBlob.Download();
+            async Task MethodUnderTest() => await _azureBlob.Download<TestModel>();
 
             // Act
             var exception = await Record.ExceptionAsync(MethodUnderTest);
@@ -132,8 +131,8 @@
         public async Task Delete_BlobExists_BlobRemoved()
         {
             // Arrange
-            var (_, serialized, _) = TestModelFactory.Create();
-            await _azureBlob.Upload(serialized);
+            var (testModel, _, _) = TestModelFactory.Create();
+            await _azureBlob.Upload(testModel);
 
             // Act
             await _azureBlob.Delete();

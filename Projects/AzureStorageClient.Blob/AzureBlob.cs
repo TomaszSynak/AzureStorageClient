@@ -1,4 +1,4 @@
-﻿namespace AzureStorageClient
+namespace AzureStorageClient
 {
     using System.IO;
     using System.Security.Cryptography;
@@ -28,8 +28,13 @@
             _azureBlobMetadata = new AzureBlobMetadata();
         }
 
-        public async Task Upload(string blobStringContent, CancellationToken cancellationToken = default)
+        public string BlobPath => _blobClient.Name;
+
+        public async Task Upload<TStorable>(TStorable objectToUpsert, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
         {
+            var blobStringContent = objectToUpsert.Serialize();
+
             var blobByteContent = blobStringContent.Encode();
 
             _azureBlobMetadata.SetIsDeleted(false);
@@ -40,7 +45,6 @@
                 memoryStream.Position = 0;
 
                 await _blobClient.UploadAsync(memoryStream, AzureBlobHeadersFactory.Create(blobByteContent), _azureBlobMetadata.Metadata, cancellationToken: cancellationToken);
-                await RefreshPropertiesAsync(cancellationToken);
             }
         }
 
@@ -61,7 +65,8 @@
             throw BlobNotFoundException.Create(_blobClient.Name);
         }
 
-        public async Task<string> Download(CancellationToken cancellationToken = default)
+        public async Task<TStorable> Download<TStorable>(CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
         {
             var blobExists = await _blobClient.ExistsAsync(cancellationToken);
             if (blobExists.Value)
@@ -80,7 +85,7 @@
 
                         var blobStringContent = blobByteContent.Decode();
 
-                        return blobStringContent;
+                        return blobStringContent.Deserialize<TStorable>();
                     }
                 }
 
@@ -91,12 +96,7 @@
         }
 
         public async Task Delete(DeleteSnapshotsOption? deleteSnapshotsOption = null, CancellationToken cancellationToken = default)
-        {
-            if (await _blobClient.ExistsAsync(cancellationToken))
-            {
-                await _blobClient.DeleteIfExistsAsync(deleteSnapshotsOption ?? DeleteSnapshotsOption.IncludeSnapshots, cancellationToken: cancellationToken);
-            }
-        }
+            => await _blobClient.DeleteIfExistsAsync(deleteSnapshotsOption ?? DeleteSnapshotsOption.IncludeSnapshots, cancellationToken: cancellationToken);
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Verify blob integrity")]
         public void CheckBlobIntegrity(BlobProperties blobProperties, byte[] blobByteContent)

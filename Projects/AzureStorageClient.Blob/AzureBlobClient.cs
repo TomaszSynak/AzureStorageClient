@@ -1,6 +1,7 @@
-﻿namespace AzureStorageClient
+namespace AzureStorageClient
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
@@ -23,13 +24,38 @@
             {
                 var azureBlob = await GetAzureBlob<TStorable>(objectToUpsert.BlobPath, cancellationToken);
 
-                var azureBlobStringContent = objectToUpsert.Serialize();
-
-                await azureBlob.Upload(azureBlobStringContent, cancellationToken);
+                await azureBlob.Upload(objectToUpsert, cancellationToken);
             }
             catch (Exception exception)
             {
                 throw new BlobClientException($"Failed to UPSERT blob {objectToUpsert.BlobPath}. ", exception);
+            }
+        }
+
+        public async Task UpsertAsync<TStorable>(IReadOnlyList<TStorable> objectToUpsertList, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
+        {
+            try
+            {
+                await _azureBlobContainer.Initialize(cancellationToken);
+
+                const int batchSize = 50;
+                var numberOfBatches = (int)Math.Ceiling(objectToUpsertList.Count / (decimal)batchSize);
+
+                for (var i = 0; i < numberOfBatches; ++i)
+                {
+                    var uploadingAzureBlobs = objectToUpsertList
+                        .Skip(i * batchSize).Take(batchSize)
+                        .Select(o => UpsertAsync(o, cancellationToken))
+                        .ToList();
+
+                    // ToDo: if any task throw exception, rethrow it
+                    await Task.WhenAll(uploadingAzureBlobs);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new BlobClientException($"Failed to BULK UPSERT blobs {string.Join(",", objectToUpsertList.Select(b => b.BlobPath))}. ", exception);
             }
         }
 
@@ -40,9 +66,7 @@
             {
                 var azureBlob = await GetAzureBlob<TStorable>(blobPath, cancellationToken);
 
-                var azureBlobStringContent = await azureBlob.Download(cancellationToken);
-
-                return azureBlobStringContent.Deserialize<TStorable>();
+                return await azureBlob.Download<TStorable>(cancellationToken);
             }
             catch (Exception exception)
             {
@@ -50,7 +74,7 @@
             }
         }
 
-        public async Task<ImmutableList<TStorable>> GetListAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
+        public async Task<ImmutableList<TStorable>> GetFolderContentAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable
         {
             // ToDo: add performance tests
@@ -59,13 +83,7 @@
             // ToDo: what if list would be empty?
             try
             {
-                var azureBlobList = await _azureBlobContainer.GetAzureBlobList(GetOrAddBlobPathPrefix<TStorable>(prefix), cancellationToken);
-
-                var downloadingAzureBlobStringContent = azureBlobList.Select(ab => ab.Download(cancellationToken)).ToList();
-
-                await Task.WhenAll(downloadingAzureBlobStringContent);
-
-                return downloadingAzureBlobStringContent.Select(bsc => bsc.Result.Deserialize<TStorable>()).ToImmutableList();
+                return await _azureBlobContainer.GetAzureBlobFolder<TStorable>(GetOrAddBlobPathPrefix<TStorable>(prefix), cancellationToken);
             }
             catch (Exception exception)
             {
