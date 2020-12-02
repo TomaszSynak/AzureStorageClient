@@ -1,6 +1,7 @@
 ﻿namespace AzureStorageClient.IntegrationTests.AzureBlobClient
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Infrastructure;
@@ -27,6 +28,25 @@
             // Assert
             var blob = await _azureBlobClient.GetAsync<TestModel>(testModel.BlobPath);
             Assert.NotNull(blob);
+        }
+
+        [Fact]
+        public async Task UpsertAsync_BulkUpsert_ListUpsertCorrectly()
+        {
+            // Arrange
+            var listToUpsert = new List<TestModel>();
+            for (int i = 0; i < 100; i++)
+            {
+                listToUpsert.Add(TestModelFactory.Create().testModel);
+            }
+
+            // Act
+            await _azureBlobClient.UpsertAsync(listToUpsert);
+
+            // Assert
+            var uploadedBlobList = await _azureBlobClient.GetFolderContentAsync<TestModel>();
+            Assert.NotEmpty(uploadedBlobList);
+            Assert.Equal(listToUpsert.Count, uploadedBlobList.Count);
         }
 
         [Fact]

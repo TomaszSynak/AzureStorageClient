@@ -32,6 +32,33 @@ namespace AzureStorageClient
             }
         }
 
+        public async Task UpsertAsync<TStorable>(IReadOnlyList<TStorable> objectToUpsertList, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
+        {
+            try
+            {
+                await _azureBlobContainer.Initialize(cancellationToken);
+
+                const int batchSize = 50;
+                var numberOfBatches = (int)Math.Ceiling(objectToUpsertList.Count / (decimal)batchSize);
+
+                for (var i = 0; i < numberOfBatches; ++i)
+                {
+                    var uploadingAzureBlobs = objectToUpsertList
+                        .Skip(i * batchSize).Take(batchSize)
+                        .Select(o => UpsertAsync(o, cancellationToken))
+                        .ToList();
+
+                    // ToDo: if any task throw exception, rethrow it
+                    await Task.WhenAll(uploadingAzureBlobs);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new BlobClientException($"Failed to BULK UPSERT blobs {string.Join(",", objectToUpsertList.Select(b => b.BlobPath))}. ", exception);
+            }
+        }
+
         public async Task<TStorable> GetAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable
         {
@@ -130,13 +157,6 @@ namespace AzureStorageClient
             where TStorable : class, IBlobStorable
         {
             return await _azureBlobContainer.GetAzureBlob(GetOrAddBlobPathPrefix<TStorable>(blobPath), cancellationToken);
-        }
-
-        private async Task<IImmutableList<AzureBlob>> GetAzureBlob<TStorable>(IReadOnlyList<string> blobPathList, CancellationToken cancellationToken = default)
-            where TStorable : class, IBlobStorable
-        {
-            var blobIdList = blobPathList.Select(GetOrAddBlobPathPrefix<TStorable>).ToList();
-            return await _azureBlobContainer.GetAzureBlobList(blobIdList, cancellationToken);
         }
     }
 }
