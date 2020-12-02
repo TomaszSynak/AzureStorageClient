@@ -53,7 +53,7 @@
             await _azureBlobClient.UpsertAsync(testModel);
 
             // Act
-            var blobContentList = await _azureBlobClient.GetListAsync<TestModel>();
+            var blobContentList = await _azureBlobClient.GetFolderContentAsync<TestModel>();
             var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id, StringComparison.InvariantCultureIgnoreCase));
 
             // Assert
@@ -73,7 +73,7 @@
             await _azureBlobClient.UpsertAsync(notListedModel);
 
             // Act
-            var blobContentList = await _azureBlobClient.GetListAsync<TestModel>(prefix: testModel.AdditionalId);
+            var blobContentList = await _azureBlobClient.GetFolderContentAsync<TestModel>(prefix: testModel.AdditionalId);
             var newlyCreatedBlob = blobContentList.SingleOrDefault(bc => bc.Id.Equals(testModel.Id, StringComparison.InvariantCultureIgnoreCase));
 
             // Assert

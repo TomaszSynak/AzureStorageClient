@@ -39,9 +39,7 @@ namespace AzureStorageClient
             {
                 var azureBlob = await GetAzureBlob<TStorable>(blobPath, cancellationToken);
 
-                var azureBlobStringContent = await azureBlob.Download(cancellationToken);
-
-                return azureBlobStringContent.Deserialize<TStorable>();
+                return await azureBlob.Download<TStorable>(cancellationToken);
             }
             catch (Exception exception)
             {
@@ -49,7 +47,7 @@ namespace AzureStorageClient
             }
         }
 
-        public async Task<ImmutableList<TStorable>> GetListAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
+        public async Task<ImmutableList<TStorable>> GetFolderContentAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable
         {
             // ToDo: add performance tests
@@ -58,13 +56,7 @@ namespace AzureStorageClient
             // ToDo: what if list would be empty?
             try
             {
-                var azureBlobList = await _azureBlobContainer.GetAzureBlobFolder(GetOrAddBlobPathPrefix<TStorable>(prefix), cancellationToken);
-
-                var downloadingAzureBlobStringContent = azureBlobList.Select(ab => ab.Download(cancellationToken)).ToList();
-
-                await Task.WhenAll(downloadingAzureBlobStringContent);
-
-                return downloadingAzureBlobStringContent.Select(bsc => bsc.Result.Deserialize<TStorable>()).ToImmutableList();
+                return await _azureBlobContainer.GetAzureBlobFolder<TStorable>(GetOrAddBlobPathPrefix<TStorable>(prefix), cancellationToken);
             }
             catch (Exception exception)
             {

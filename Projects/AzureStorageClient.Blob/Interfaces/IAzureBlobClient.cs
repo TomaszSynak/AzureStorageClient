@@ -14,7 +14,7 @@
         Task<TStorable> GetAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable;
 
-        Task<ImmutableList<TStorable>> GetListAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
+        Task<ImmutableList<TStorable>> GetFolderContentAsync<TStorable>(string prefix = null, CancellationToken cancellationToken = default)
             where TStorable : class, IBlobStorable;
 
         Task SoftDeleteAsync<TStorable>(string blobPath, CancellationToken cancellationToken = default)
