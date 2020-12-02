@@ -66,7 +66,8 @@ namespace AzureStorageClient
             throw BlobNotFoundException.Create(_blobClient.Name);
         }
 
-        public async Task<string> Download(CancellationToken cancellationToken = default)
+        public async Task<TStorable> Download<TStorable>(CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
         {
             var blobExists = await _blobClient.ExistsAsync(cancellationToken);
             if (blobExists.Value)
@@ -85,7 +86,7 @@ namespace AzureStorageClient
 
                         var blobStringContent = blobByteContent.Decode();
 
-                        return blobStringContent;
+                        return blobStringContent.Deserialize<TStorable>();
                     }
                 }
 

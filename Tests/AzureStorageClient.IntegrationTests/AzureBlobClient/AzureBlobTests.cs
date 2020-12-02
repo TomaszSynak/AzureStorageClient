@@ -83,8 +83,7 @@
             await _azureBlob.Upload(testModel);
 
             // Act
-            var downloadedContent = await _azureBlob.Download();
-            var deserializedContent = downloadedContent.Deserialize<TestModel>();
+            var deserializedContent = await _azureBlob.Download<TestModel>();
 
             // Assert
             Assert.Equal(testModel.Id, deserializedContent.Id);
@@ -95,7 +94,7 @@
         public async Task Download_BlobDoesNotExist_ExceptionThrown()
         {
             // Arrange
-            async Task MethodUnderTest() => await _azureBlob.Download();
+            async Task MethodUnderTest() => await _azureBlob.Download<TestModel>();
 
             // Act
             var exception = await Record.ExceptionAsync(MethodUnderTest);
@@ -114,7 +113,7 @@
             blobStorageMetadata.SetIsDeleted(true);
             await _blobClient.SetMetadataAsync(blobStorageMetadata.Metadata);
 
-            async Task MethodUnderTest() => await _azureBlob.Download();
+            async Task MethodUnderTest() => await _azureBlob.Download<TestModel>();
 
             // Act
             var exception = await Record.ExceptionAsync(MethodUnderTest);
