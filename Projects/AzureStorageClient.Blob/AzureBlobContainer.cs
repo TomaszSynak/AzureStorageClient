@@ -57,7 +57,14 @@
             return CreateAzureBlob(blobId);
         }
 
-        public async Task<ImmutableList<AzureBlob>> GetAzureBlobList(string prefix = null, CancellationToken cancellationToken = default)
+        public async Task<ImmutableList<AzureBlob>> GetAzureBlobList(IReadOnlyList<string> blobIdList, CancellationToken cancellationToken = default)
+        {
+            await Initialize(cancellationToken);
+
+            return blobIdList.Select(CreateAzureBlob).ToImmutableList();
+        }
+
+        public async Task<ImmutableList<AzureBlob>> GetAzureBlobFolder(string prefix = null, CancellationToken cancellationToken = default)
         {
             await Initialize(cancellationToken);
 

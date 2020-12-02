@@ -16,7 +16,7 @@
         {
             // ToDo: use create resource attribute
             // Arrange
-            var options = OptionsFactory.CreateBlobSettings(Guid.NewGuid().ToString("D"));
+            var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
             var blobStorageContainer = new AzureBlobContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
@@ -42,7 +42,7 @@
         public async Task GetBlobStorage_ContainerExists_ContainerCreated()
         {
             // Arrange
-            var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
+            var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
             var blobStorageContainer = new AzureBlobContainer(options);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
@@ -61,16 +61,16 @@
         public async Task GetBlobStorageList_LargeFolder_BlobsFetchedInBatches()
         {
             // Arrange
-            var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
+            var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
             var blobStorageContainer = new AzureBlobContainer(options);
             for (int i = 0; i < 100; i++)
             {
                 var blobStorage = await blobStorageContainer.GetAzureBlob($"LargeFolder/Blob-{i}");
-                await blobStorage.Upload($"Blob-{i} - some mock blob content");
+                await blobStorage.Upload(TestModelFactory.Create().testModel);
             }
 
             // Act
-            var blobStorageList = await blobStorageContainer.GetAzureBlobList("LargeFolder");
+            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder("LargeFolder");
 
             // Assert
             Assert.NotEmpty(blobStorageList);
@@ -84,13 +84,13 @@
         public async Task GetBlobStorageList_ContainerContainsDeletedBlob_GetEmptyContent()
         {
             // Arrange
-            var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
+            var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
             var blobStorageContainer = new AzureBlobContainer(options);
 
             var blobName = Guid.NewGuid().ToString("D");
 
             var blobStorage = await blobStorageContainer.GetAzureBlob(blobName);
-            await blobStorage.Upload("Some mock blob content");
+            await blobStorage.Upload(TestModelFactory.Create().testModel);
 
             var blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);
             var blobStorageMetadata = new AzureBlobMetadata();
@@ -98,7 +98,7 @@
             await blobClient.SetMetadataAsync(blobStorageMetadata.Metadata);
 
             // Act
-            var blobStorageList = await blobStorageContainer.GetAzureBlobList();
+            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder();
 
             // Assert
             Assert.Empty(blobStorageList);
@@ -111,19 +111,19 @@
         public async Task DeleteAzureBlobFolder_LargeFolder_BlobsDeletedInBatches()
         {
             // Arrange
-            var options = OptionsFactory.CreateBlobSettings(containerName: "some-mock-container");
+            var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
             var blobStorageContainer = new AzureBlobContainer(options);
             for (int i = 0; i < 100; i++)
             {
                 var blobStorage = await blobStorageContainer.GetAzureBlob($"LargeFolder/Blob-{i}");
-                await blobStorage.Upload($"Blob-{i} - some mock blob content");
+                await blobStorage.Upload(TestModelFactory.Create().testModel);
             }
 
             // Act
             await blobStorageContainer.DeleteAzureBlobFolder("LargeFolder");
 
             // Assert
-            var blobStorageList = await blobStorageContainer.GetAzureBlobList("LargeFolder");
+            var blobStorageList = await blobStorageContainer.GetAzureBlobFolder("LargeFolder");
             Assert.Empty(blobStorageList);
 
             // Clean up

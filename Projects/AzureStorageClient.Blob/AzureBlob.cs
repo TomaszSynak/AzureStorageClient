@@ -1,4 +1,4 @@
-﻿namespace AzureStorageClient
+namespace AzureStorageClient
 {
     using System.IO;
     using System.Security.Cryptography;
@@ -28,8 +28,13 @@
             _azureBlobMetadata = new AzureBlobMetadata();
         }
 
-        public async Task Upload(string blobStringContent, CancellationToken cancellationToken = default)
+        public string BlobPath => _blobClient.Name;
+
+        public async Task Upload<TStorable>(TStorable objectToUpsert, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
         {
+            var blobStringContent = objectToUpsert.Serialize();
+
             var blobByteContent = blobStringContent.Encode();
 
             _azureBlobMetadata.SetIsDeleted(false);

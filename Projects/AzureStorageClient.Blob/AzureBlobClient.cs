@@ -1,6 +1,7 @@
-﻿namespace AzureStorageClient
+namespace AzureStorageClient
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
@@ -23,9 +24,7 @@
             {
                 var azureBlob = await GetAzureBlob<TStorable>(objectToUpsert.BlobPath, cancellationToken);
 
-                var azureBlobStringContent = objectToUpsert.Serialize();
-
-                await azureBlob.Upload(azureBlobStringContent, cancellationToken);
+                await azureBlob.Upload(objectToUpsert, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -59,7 +58,7 @@
             // ToDo: what if list would be empty?
             try
             {
-                var azureBlobList = await _azureBlobContainer.GetAzureBlobList(GetOrAddBlobPathPrefix<TStorable>(prefix), cancellationToken);
+                var azureBlobList = await _azureBlobContainer.GetAzureBlobFolder(GetOrAddBlobPathPrefix<TStorable>(prefix), cancellationToken);
 
                 var downloadingAzureBlobStringContent = azureBlobList.Select(ab => ab.Download(cancellationToken)).ToList();
 
@@ -139,6 +138,13 @@
             where TStorable : class, IBlobStorable
         {
             return await _azureBlobContainer.GetAzureBlob(GetOrAddBlobPathPrefix<TStorable>(blobPath), cancellationToken);
+        }
+
+        private async Task<IImmutableList<AzureBlob>> GetAzureBlob<TStorable>(IReadOnlyList<string> blobPathList, CancellationToken cancellationToken = default)
+            where TStorable : class, IBlobStorable
+        {
+            var blobIdList = blobPathList.Select(GetOrAddBlobPathPrefix<TStorable>).ToList();
+            return await _azureBlobContainer.GetAzureBlobList(blobIdList, cancellationToken);
         }
     }
 }
