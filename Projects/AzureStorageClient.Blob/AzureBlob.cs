@@ -45,7 +45,6 @@ namespace AzureStorageClient
                 memoryStream.Position = 0;
 
                 await _blobClient.UploadAsync(memoryStream, AzureBlobHeadersFactory.Create(blobByteContent), _azureBlobMetadata.Metadata, cancellationToken: cancellationToken);
-                await RefreshPropertiesAsync(cancellationToken);
             }
         }
 
@@ -97,12 +96,7 @@ namespace AzureStorageClient
         }
 
         public async Task Delete(DeleteSnapshotsOption? deleteSnapshotsOption = null, CancellationToken cancellationToken = default)
-        {
-            if (await _blobClient.ExistsAsync(cancellationToken))
-            {
-                await _blobClient.DeleteIfExistsAsync(deleteSnapshotsOption ?? DeleteSnapshotsOption.IncludeSnapshots, cancellationToken: cancellationToken);
-            }
-        }
+            => await _blobClient.DeleteIfExistsAsync(deleteSnapshotsOption ?? DeleteSnapshotsOption.IncludeSnapshots, cancellationToken: cancellationToken);
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Verify blob integrity")]
         public void CheckBlobIntegrity(BlobProperties blobProperties, byte[] blobByteContent)
