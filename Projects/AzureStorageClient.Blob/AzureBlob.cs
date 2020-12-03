@@ -89,10 +89,10 @@ namespace AzureStorageClient
                     }
                 }
 
-                throw BlobDeletedException.Create(_blobClient.Name);
+                return null;
             }
 
-            throw BlobNotFoundException.Create(_blobClient.Name);
+            return null;
         }
 
         public async Task Delete(DeleteSnapshotsOption? deleteSnapshotsOption = null, CancellationToken cancellationToken = default)
