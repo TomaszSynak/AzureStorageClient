@@ -91,20 +91,17 @@
         }
 
         [Fact]
-        public async Task Download_BlobDoesNotExist_ExceptionThrown()
+        public async Task Download_BlobDoesNotExist_NullReturned()
         {
-            // Arrange
-            async Task MethodUnderTest() => await _azureBlob.Download<TestModel>();
-
             // Act
-            var exception = await Record.ExceptionAsync(MethodUnderTest);
+            var result = await _azureBlob.Download<TestModel>();
 
             // Assert
-            Assert.IsType<BlobNotFoundException>(exception);
+            Assert.Null(result);
         }
 
         [Fact]
-        public async Task Download_BlobExistsAndBlobIsDeleted_ExceptionThrown()
+        public async Task Download_BlobExistsAndBlobIsDeleted_NullReturned()
         {
             // Arrange
             var (testModel, _, _) = TestModelFactory.Create();
@@ -113,13 +110,11 @@
             blobStorageMetadata.SetIsDeleted(true);
             await _blobClient.SetMetadataAsync(blobStorageMetadata.Metadata);
 
-            async Task MethodUnderTest() => await _azureBlob.Download<TestModel>();
-
             // Act
-            var exception = await Record.ExceptionAsync(MethodUnderTest);
+            var result = await _azureBlob.Download<TestModel>();
 
             // Assert
-            Assert.IsType<BlobDeletedException>(exception);
+            Assert.Null(result);
 
             var blobProperties = (await _blobClient.GetPropertiesAsync()).Value;
             blobStorageMetadata = new AzureBlobMetadata(blobProperties.Metadata);

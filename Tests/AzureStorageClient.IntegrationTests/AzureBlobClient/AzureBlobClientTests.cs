@@ -115,10 +115,8 @@
             await _azureBlobClient.DeleteAsync<TestModel>(testModel.BlobPath);
 
             // Assert
-            async Task CheckIfExists() => await _azureBlobClient.GetAsync<TestModel>(testModel.BlobPath);
-            var exception = await Record.ExceptionAsync(CheckIfExists);
-            Assert.IsType<BlobClientException>(exception);
-            Assert.StartsWith($"Failed to GET blob {testModel.BlobPath}.", exception.Message, StringComparison.InvariantCultureIgnoreCase);
+            var checkIfExists = await _azureBlobClient.GetAsync<TestModel>(testModel.BlobPath);
+            Assert.Null(checkIfExists);
         }
 
         [Fact]
@@ -132,10 +130,8 @@
             await _azureBlobClient.DeleteFolderAsync<TestModel>(testModel.AdditionalId);
 
             // Assert
-            async Task CheckIfExists() => await _azureBlobClient.GetAsync<TestModel>(testModel.BlobPath);
-            var exception = await Record.ExceptionAsync(CheckIfExists);
-            Assert.IsType<BlobClientException>(exception);
-            Assert.StartsWith($"Failed to GET blob {testModel.BlobPath}.", exception.Message, StringComparison.InvariantCultureIgnoreCase);
+            var checkIfExists = await _azureBlobClient.GetAsync<TestModel>(testModel.BlobPath);
+            Assert.Null(checkIfExists);
         }
     }
 }
