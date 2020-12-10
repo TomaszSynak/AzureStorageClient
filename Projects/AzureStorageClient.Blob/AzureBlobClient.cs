@@ -39,15 +39,9 @@ namespace AzureStorageClient
             {
                 await _azureBlobContainer.Initialize(cancellationToken);
 
-                const int batchSize = 50;
-                var numberOfBatches = (int)Math.Ceiling(objectToUpsertList.Count / (decimal)batchSize);
-
-                for (var i = 0; i < numberOfBatches; ++i)
+                foreach (var batch in objectToUpsertList.GetBatchesOf(50))
                 {
-                    var uploadingAzureBlobs = objectToUpsertList
-                        .Skip(i * batchSize).Take(batchSize)
-                        .Select(o => UpsertAsync(o, cancellationToken))
-                        .ToList();
+                    var uploadingAzureBlobs = batch.Select(o => UpsertAsync(o, cancellationToken)).ToList();
 
                     // ToDo: if any task throw exception, rethrow it
                     await Task.WhenAll(uploadingAzureBlobs);
