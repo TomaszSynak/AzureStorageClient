@@ -37,7 +37,7 @@ namespace AzureStorageClient
         {
             applicationBuilder = applicationBuilder ?? throw new ArgumentNullException(nameof(applicationBuilder));
 
-            using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
+            using (var serviceScope = applicationBuilder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var blobContainer = serviceScope.ServiceProvider.GetService<AzureBlobContainer>();
                 blobContainer.Initialize();
