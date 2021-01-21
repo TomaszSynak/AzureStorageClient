@@ -36,6 +36,9 @@ namespace AzureStorageClient.MultiContainerClient
             {
                 endpoints.MapControllers();
             });
+
+            app.InitializeAzureBlobClient<NinjaSettings>();
+            app.InitializeAzureBlobClient<SamuraiSettings>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.

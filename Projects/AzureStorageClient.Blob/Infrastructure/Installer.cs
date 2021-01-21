@@ -5,6 +5,7 @@ namespace AzureStorageClient
     using System;
     using System.Net;
     using System.Text;
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -22,21 +23,22 @@ namespace AzureStorageClient
                 ?? throw new ArgumentNullException($"{typeof(TSettings).Name} is missing from configuration.");
 
             serviceCollection
-                .Configure<TSettings>(configurationSection);
+                .Configure<TSettings>(configurationSection)
+                .PostConfigure<TSettings>(settings => settings.IsValid<TSettings>());
 
             serviceCollection
                 .AddTransient(typeof(IAzureBlobClient<TSettings>), AzureBlobClientFactory.Create<TSettings>);
         }
 
-        // public static void InitializeAzureBlobClient<TClient>(this IApplicationBuilder applicationBuilder)
-        //    where TClient : IAzureBlobClient
-        // {
-        //    applicationBuilder = applicationBuilder ?? throw new ArgumentNullException(nameof(applicationBuilder));
-        //    using (var serviceScope = applicationBuilder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-        //    {
-        //        var blobContainer = serviceScope.ServiceProvider.GetService<AzureBlobContainer<TClient>>();
-        //        blobContainer.Initialize();
-        //    }
-        // }
+        public static void InitializeAzureBlobClient<TSettings>(this IApplicationBuilder applicationBuilder)
+            where TSettings : class, IAzureBlobClientSettings, new()
+        {
+            applicationBuilder = applicationBuilder ?? throw new ArgumentNullException(nameof(applicationBuilder));
+            using (var serviceScope = applicationBuilder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var blobContainer = serviceScope.ServiceProvider.GetService<IAzureBlobClient<TSettings>>();
+                blobContainer.IsAccessible();
+            }
+        }
     }
 }
