@@ -44,7 +44,6 @@ namespace AzureStorageClient.MultiContainerClient
             services.AddControllers();
 
             services.AddInfrastructure();
-
             services.AddNinjaComponent(Configuration);
 
             services.AddSamuraiComponent(Configuration);

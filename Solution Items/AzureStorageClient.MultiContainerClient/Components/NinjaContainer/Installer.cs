@@ -5,11 +5,9 @@
 
     internal static class Installer
     {
-        private const string BlobSettingsName = "NinjaBlobSettings";
-
         public static IServiceCollection AddNinjaComponent(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
-            serviceCollection.AddAzureBlobClient(configuration, BlobSettingsName);
+            serviceCollection.AddAzureBlobClient<NinjaSettings>(configuration);
 
             return serviceCollection;
         }

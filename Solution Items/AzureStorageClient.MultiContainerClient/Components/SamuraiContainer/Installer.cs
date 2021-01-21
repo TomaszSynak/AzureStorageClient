@@ -5,11 +5,9 @@
 
     internal static class Installer
     {
-        private const string BlobSettingsName = "SamuraiBlobSettings";
-
         public static IServiceCollection AddSamuraiComponent(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
-            serviceCollection.AddAzureBlobClient(configuration, BlobSettingsName);
+            serviceCollection.AddAzureBlobClient<SamuraiSettings>(configuration);
 
             return serviceCollection;
         }
