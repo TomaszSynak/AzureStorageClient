@@ -5,7 +5,8 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public interface IAzureBlobClient
+    public interface IAzureBlobClient<TSettings>
+        where TSettings : class, IAzureBlobClientSettings, new()
     {
         Task<bool> IsAccessible(CancellationToken cancellationToken = default);
 

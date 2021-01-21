@@ -9,7 +9,6 @@
     using Azure;
     using Azure.Storage.Blobs;
     using Azure.Storage.Blobs.Models;
-    using Microsoft.Extensions.Options;
 
     internal class AzureBlobContainer
     {
@@ -17,9 +16,9 @@
 
         private bool _isInitialized;
 
-        public AzureBlobContainer(IOptions<AzureBlobClientSettings> options, bool? isInitialized = false)
+        public AzureBlobContainer(IAzureBlobClientSettings options, bool? isInitialized = false)
         {
-            _blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
+            _blobContainerClient = new BlobContainerClient(options.ConnectionString, options.ContainerName);
             _isInitialized = isInitialized ?? false;
         }
 

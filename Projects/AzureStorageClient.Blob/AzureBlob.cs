@@ -6,7 +6,6 @@ namespace AzureStorageClient
     using System.Threading.Tasks;
     using Azure.Storage.Blobs;
     using Azure.Storage.Blobs.Models;
-    using Microsoft.Extensions.Options;
 
     internal class AzureBlob
     {
@@ -16,9 +15,9 @@ namespace AzureStorageClient
 
         private BlobProperties _blobProperties;
 
-        public AzureBlob(IOptions<AzureBlobClientSettings> options, string blobName)
+        public AzureBlob(IAzureBlobClientSettings options, string blobName)
         {
-            _blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);
+            _blobClient = new BlobClient(options.ConnectionString, options.ContainerName, blobName);
             _azureBlobMetadata = new AzureBlobMetadata();
         }
 

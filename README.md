@@ -50,12 +50,13 @@ One of the below:
 ![AzureStorageClient.Blob dependency diagram](./Documentation/AzureStorageClient.Blob_dependency_diagram.jpg)
 
 ## Roadmap
-- support for multiple containers within same AzureBlobClient
+- ~~support for multiple containers within same AzureBlobClient~~
 - lock blob while upserting content
 - use AsyncStream to stream content of large blob folder
 - performance tests
 - add permission functionality around blobs (separate package)
 - create hangfire/background scheduler with TableStorage
+- update .Net Standard v2.0 to v2.1
 
 ## Contribution
 If you would like to report an issue, open pull request, suggest new feature or just improvement, you are most welcome. 
