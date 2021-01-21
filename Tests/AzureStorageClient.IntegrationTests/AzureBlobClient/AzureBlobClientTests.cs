@@ -6,15 +6,14 @@
     using System.Threading.Tasks;
     using Infrastructure;
     using Xunit;
-    using AzureBlobClient = AzureStorageClient.AzureBlobClient;
 
     [CleanAzureBlob]
     [Collection(nameof(IntegrationTests))]
     public class AzureBlobClientTests
     {
-        private readonly AzureBlobClient _azureBlobClient;
+        private readonly AzureBlobClient<AzureBlobClientSettings> _azureBlobClient;
 
-        public AzureBlobClientTests() => _azureBlobClient = new AzureBlobClient(new AzureBlobContainer(OptionsFactory.CreateBlobSettings()));
+        public AzureBlobClientTests() => _azureBlobClient = new AzureBlobClient<AzureBlobClientSettings>(new AzureBlobContainer(OptionsFactory.CreateBlobSettings().Value));
 
         [Fact]
         public async Task UpsertAsync_ObjectUpsertCorrectly()
