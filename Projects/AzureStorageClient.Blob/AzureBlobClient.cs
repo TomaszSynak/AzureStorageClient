@@ -7,7 +7,8 @@ namespace AzureStorageClient
     using System.Threading;
     using System.Threading.Tasks;
 
-    internal class AzureBlobClient : IAzureBlobClient
+    internal class AzureBlobClient<TSettings> : IAzureBlobClient<TSettings>
+        where TSettings : class, IAzureBlobClientSettings, new()
     {
         // ToDo: add performance tests
         private readonly AzureBlobContainer _azureBlobContainer;

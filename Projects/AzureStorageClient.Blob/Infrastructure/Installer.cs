@@ -11,36 +11,33 @@ namespace AzureStorageClient
 
     public static class Installer
     {
-        private const string SettingsSection = nameof(AzureBlobClientSettings);
-
-        public static void AddAzureBlobClient(this IServiceCollection serviceCollection, IConfiguration configuration, string settingsSection = null)
+        public static void AddAzureBlobClient<TSettings>(this IServiceCollection serviceCollection, IConfiguration configuration)
+            where TSettings : class, IAzureBlobClientSettings, new()
         {
             // Enable TLS 1.2 before connecting to Azure Storage
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var configurationSection = configuration?.GetSection(settingsSection ?? SettingsSection)
-                ?? throw new ArgumentNullException($"{SettingsSection} is missing from configuration.");
+            var configurationSection = configuration?.GetSection(typeof(TSettings).Name)
+                ?? throw new ArgumentNullException($"{typeof(TSettings).Name} is missing from configuration.");
 
             serviceCollection
-                .Configure<AzureBlobClientSettings>(configurationSection);
+                .Configure<TSettings>(configurationSection)
+                .PostConfigure<TSettings>(settings => settings.IsValid<TSettings>());
 
             serviceCollection
-                .AddTransient(AzureBlobContainerFactory.Register);
-
-            serviceCollection
-                .AddTransient<IAzureBlobClient, AzureBlobClient>();
+                .AddTransient(typeof(IAzureBlobClient<TSettings>), AzureBlobClientFactory.Create<TSettings>);
         }
 
-        public static void InitializeAzureBlobClient(this IApplicationBuilder applicationBuilder)
+        public static void InitializeAzureBlobClient<TSettings>(this IApplicationBuilder applicationBuilder)
+            where TSettings : class, IAzureBlobClientSettings, new()
         {
             applicationBuilder = applicationBuilder ?? throw new ArgumentNullException(nameof(applicationBuilder));
-
             using (var serviceScope = applicationBuilder.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var blobContainer = serviceScope.ServiceProvider.GetService<AzureBlobContainer>();
-                blobContainer.Initialize();
+                var blobContainer = serviceScope.ServiceProvider.GetService<IAzureBlobClient<TSettings>>();
+                blobContainer.IsAccessible();
             }
         }
     }

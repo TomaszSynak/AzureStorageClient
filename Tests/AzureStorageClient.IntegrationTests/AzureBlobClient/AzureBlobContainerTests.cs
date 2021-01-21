@@ -17,7 +17,7 @@
             // ToDo: use create resource attribute
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
-            var blobStorageContainer = new AzureBlobContainer(options);
+            var blobStorageContainer = new AzureBlobContainer(options.Value);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
             var containerExists = (await blobContainerClient.ExistsAsync()).Value;
@@ -43,7 +43,7 @@
         {
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
-            var blobStorageContainer = new AzureBlobContainer(options);
+            var blobStorageContainer = new AzureBlobContainer(options.Value);
             var blobContainerClient = new BlobContainerClient(options.Value.ConnectionString, options.Value.ContainerName);
 
             // Act
@@ -62,7 +62,7 @@
         {
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
-            var blobStorageContainer = new AzureBlobContainer(options);
+            var blobStorageContainer = new AzureBlobContainer(options.Value);
             for (int i = 0; i < 100; i++)
             {
                 var blobStorage = await blobStorageContainer.GetAzureBlob($"LargeFolder/Blob-{i}");
@@ -85,7 +85,7 @@
         {
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
-            var blobStorageContainer = new AzureBlobContainer(options);
+            var blobStorageContainer = new AzureBlobContainer(options.Value);
 
             var blobName = Guid.NewGuid().ToString("D");
 
@@ -112,7 +112,7 @@
         {
             // Arrange
             var options = OptionsFactory.CreateBlobSettings(containerName: $"some-mock-container-{Guid.NewGuid()}");
-            var blobStorageContainer = new AzureBlobContainer(options);
+            var blobStorageContainer = new AzureBlobContainer(options.Value);
             for (int i = 0; i < 100; i++)
             {
                 var blobStorage = await blobStorageContainer.GetAzureBlob($"LargeFolder/Blob-{i}");

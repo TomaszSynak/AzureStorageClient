@@ -21,7 +21,7 @@
 
             _blobClient = new BlobClient(options.Value.ConnectionString, options.Value.ContainerName, blobName);
 
-            _azureBlob = new AzureBlob(options, blobName);
+            _azureBlob = new AzureBlob(options.Value, blobName);
         }
 
         [Fact]
