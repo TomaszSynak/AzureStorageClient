@@ -23,7 +23,8 @@
         {
             return await _azureTableContainer
                 .GetAzureTable<TStorable>()
-                .IsAccessible(cancellationToken);
+                .IsAccessible(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async Task UpsertAsync<TStorable>(TStorable objectToUpsert, Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
