@@ -18,7 +18,7 @@
 		<Platforms>x64</Platforms>
 
 		<RootNamespace>AzureStorageClient</RootNamespace>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<NoWarn></NoWarn>
 		<WarningsAsErrors />
 		<CodeAnalysisRuleSet>../../AzureStorageClient.ruleset</CodeAnalysisRuleSet>

@@ -17,7 +17,9 @@ namespace AzureStorageClient
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             var configurationSection = configuration?.GetSection(SettingsSection)
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
                      ?? throw new ArgumentNullException($"{SettingsSection} is missing from configuration.");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
 
             serviceCollection
                 .Configure<AzureTableClientSettings>(configurationSection);

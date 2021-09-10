@@ -64,9 +64,9 @@
 
         public async Task<ImmutableList<TStorable>> GetList(Guid? azureTablePartitionId = null, CancellationToken cancellationToken = default)
         {
-            var filter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, GetPartitionKey(azureTablePartitionId));
+            var partitionFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, GetPartitionKey(azureTablePartitionId));
 
-            var query = new TableQuery<TStorable>().Where(filter).AsTableQuery();
+            var query = new TableQuery<TStorable>().Where(partitionFilter).AsTableQuery();
 
             TableContinuationToken continuationToken = null;
 
@@ -78,7 +78,7 @@
                 result.AddRange(partialResult);
                 continuationToken = partialResult.ContinuationToken;
             }
-            while (continuationToken != null);
+            while (continuationToken != null && !cancellationToken.IsCancellationRequested);
 
             return result.ToImmutableList();
         }

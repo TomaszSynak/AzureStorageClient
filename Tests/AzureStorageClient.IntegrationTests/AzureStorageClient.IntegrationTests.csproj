@@ -10,7 +10,7 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<IsPackable>false</IsPackable>
 
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<WarningsAsErrors />
 		<CodeAnalysisRuleSet>../../AzureStorageClient.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
